@@ -28,7 +28,9 @@
       "Bash(python3:*)",
       "Bash(open -a Simulator)",
       "Bash(npm install:*)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "Bash(npx openapi-typescript-codegen:*)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []

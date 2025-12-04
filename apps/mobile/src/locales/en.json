@@ -11,7 +11,8 @@
     "filter": "Filter",
     "all": "All",
     "confirm": "Confirm",
-    "back": "Back"
+    "back": "Back",
+    "none": "None"
   },
   "auth": {
     "login": "Login",
@@ -100,7 +101,17 @@
     "about": "About",
     "homeCode": "Home Code",
     "shareCode": "Share Code",
-    "members": "Members"
+    "members": "Members",
+    "creditCards": "Credit Cards"
+  },
+  "creditCards": {
+    "title": "Credit Cards",
+    "addCard": "Add Card",
+    "editCard": "Edit Card",
+    "cardName": "Card Name",
+    "noCards": "No credit cards yet",
+    "deleteTitle": "Delete Card",
+    "deleteConfirm": "Are you sure you want to delete this card?"
   },
   "summary": {
     "personal": "Personal Summary",

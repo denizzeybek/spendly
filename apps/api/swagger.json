@@ -637,6 +637,127 @@
         }
       }
     },
+    "/api/credit-cards": {
+      "get": {
+        "summary": "List user's credit cards",
+        "tags": [
+          "CreditCards"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Credit card list"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create credit card",
+        "tags": [
+          "CreditCards"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Credit card created"
+          }
+        }
+      }
+    },
+    "/api/credit-cards/{id}": {
+      "patch": {
+        "summary": "Update credit card",
+        "tags": [
+          "CreditCards"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Credit card updated"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete credit card",
+        "tags": [
+          "CreditCards"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Credit card deleted"
+          }
+        }
+      }
+    },
     "/api/home": {
       "get": {
         "summary": "Get current user's home",

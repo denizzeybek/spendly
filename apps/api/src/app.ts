@@ -10,6 +10,7 @@ import { homeRoutes } from './modules/home/home.routes';
 import { userRoutes } from './modules/user/user.routes';
 import { transactionRoutes } from './modules/transaction/transaction.routes';
 import { categoryRoutes } from './modules/category/category.routes';
+import { creditCardRoutes } from './modules/credit-card/credit-card.routes';
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.use('/api/home', homeRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/credit-cards', creditCardRoutes);
 
 // Error handler
 app.use(errorMiddleware);

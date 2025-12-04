@@ -11,7 +11,8 @@
     "filter": "Filtrele",
     "all": "Tümü",
     "confirm": "Onayla",
-    "back": "Geri"
+    "back": "Geri",
+    "none": "Yok"
   },
   "auth": {
     "login": "Giriş Yap",
@@ -100,7 +101,17 @@
     "about": "Hakkında",
     "homeCode": "Ev Kodu",
     "shareCode": "Kodu Paylaş",
-    "members": "Üyeler"
+    "members": "Üyeler",
+    "creditCards": "Kredi Kartlarım"
+  },
+  "creditCards": {
+    "title": "Kredi Kartlarım",
+    "addCard": "Kart Ekle",
+    "editCard": "Kartı Düzenle",
+    "cardName": "Kart Adı",
+    "noCards": "Henüz kredi kartı yok",
+    "deleteTitle": "Kartı Sil",
+    "deleteConfirm": "Bu kartı silmek istediğinizden emin misiniz?"
   },
   "summary": {
     "personal": "Kişisel Özet",

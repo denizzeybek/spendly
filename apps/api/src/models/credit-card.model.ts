@@ -18,7 +18,6 @@ const creditCardSchema = new Schema<ICreditCardDocument>(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
-      unique: true,
     },
   },
   {
@@ -34,6 +33,7 @@ const creditCardSchema = new Schema<ICreditCardDocument>(
   }
 );
 
-// userId index is created by unique: true
+// Index for faster queries by userId
+creditCardSchema.index({ userId: 1 });
 
 export const CreditCard = mongoose.model<ICreditCardDocument>('CreditCard', creditCardSchema);

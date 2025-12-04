@@ -21,6 +21,7 @@ export type { User } from './models/User';
 
 export { AuthService } from './services/AuthService';
 export { CategoriesService } from './services/CategoriesService';
+export { CreditCardsService } from './services/CreditCardsService';
 export { HomeService } from './services/HomeService';
 export { TransactionsService } from './services/TransactionsService';
 export { UsersService } from './services/UsersService';

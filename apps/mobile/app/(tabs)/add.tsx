@@ -24,8 +24,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import { router, useFocusEffect } from 'expo-router';
 import { Users, Repeat, CreditCard, ChevronDown } from 'lucide-react-native';
-import { useTransactionsStore, useCategoriesStore, useHomeStore } from '../../src/store';
-import type { HomeUser, CreditCard as CreditCardType } from '../../src/store';
+import { useTransactionsStore, useCategoriesStore, useCreditCardsStore } from '../../src/store';
+import type { CreditCard as CreditCardType } from '../../src/client';
 import { colors } from '../../src/constants/theme';
 
 type TransactionType = 'INCOME' | 'EXPENSE';
@@ -34,13 +34,13 @@ export default function AddTransactionScreen() {
   const { t } = useTranslation();
   const { createTransaction, isCreating, error } = useTransactionsStore();
   const { categories, fetchCategories } = useCategoriesStore();
-  const { users, fetchUsers } = useHomeStore();
+  const { creditCards, fetchCreditCards } = useCreditCardsStore();
 
   const [type, setType] = useState<TransactionType>('EXPENSE');
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<typeof categories[0] | null>(null);
-  const [selectedCard, setSelectedCard] = useState<{ id: string; name: string } | null>(null);
+  const [selectedCard, setSelectedCard] = useState<CreditCardType | null>(null);
   const [isShared, setIsShared] = useState(false);
   const [isRecurring, setIsRecurring] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
@@ -61,8 +61,8 @@ export default function AddTransactionScreen() {
     useCallback(() => {
       resetForm();
       fetchCategories();
-      fetchUsers();
-    }, [resetForm, fetchCategories, fetchUsers])
+      fetchCreditCards();
+    }, [resetForm, fetchCategories, fetchCreditCards])
   );
 
   useEffect(() => {
@@ -72,10 +72,6 @@ export default function AddTransactionScreen() {
   const filteredCategories = categories.filter(
     (cat) => cat.type === type || cat.type === 'BOTH'
   );
-
-  const creditCards = users
-    .filter((u: HomeUser) => u.creditCard)
-    .map((u: HomeUser) => u.creditCard) as CreditCardType[];
 
   const handleSubmit = async () => {
     if (!title || !amount || !selectedCategory) return;
@@ -278,7 +274,7 @@ export default function AddTransactionScreen() {
                   }}
                   py="$3"
                 >
-                  <Text size="md" color="$textLight500">None</Text>
+                  <Text size="md" color="$textLight500">{t('common.none')}</Text>
                 </Pressable>
                 {creditCards.map((card) => (
                   <Pressable
