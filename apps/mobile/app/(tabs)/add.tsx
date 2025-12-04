@@ -194,26 +194,25 @@ export default function AddTransactionScreen() {
             </Pressable>
           )}
 
-          {/* Switches (Expense only) */}
+          {/* Shared Switch (Expense only) */}
           {type === 'EXPENSE' && (
-            <VStack space="md">
-              <HStack justifyContent="space-between" alignItems="center" py="$2">
-                <HStack space="md" alignItems="center">
-                  <Users size={24} color={colors.shared} />
-                  <Text size="md">{t('transactions.shared')}</Text>
-                </HStack>
-                <Switch value={isShared} onValueChange={setIsShared} />
+            <HStack justifyContent="space-between" alignItems="center" py="$2">
+              <HStack space="md" alignItems="center">
+                <Users size={24} color={colors.shared} />
+                <Text size="md">{t('transactions.shared')}</Text>
               </HStack>
-
-              <HStack justifyContent="space-between" alignItems="center" py="$2">
-                <HStack space="md" alignItems="center">
-                  <Repeat size={24} color={colors.primary} />
-                  <Text size="md">{t('transactions.recurring')}</Text>
-                </HStack>
-                <Switch value={isRecurring} onValueChange={setIsRecurring} />
-              </HStack>
-            </VStack>
+              <Switch value={isShared} onValueChange={setIsShared} />
+            </HStack>
           )}
+
+          {/* Recurring Switch (Both Income and Expense) */}
+          <HStack justifyContent="space-between" alignItems="center" py="$2">
+            <HStack space="md" alignItems="center">
+              <Repeat size={24} color={colors.primary} />
+              <Text size="md">{t('transactions.recurring')}</Text>
+            </HStack>
+            <Switch value={isRecurring} onValueChange={setIsRecurring} />
+          </HStack>
 
           {/* Error Message */}
           {error && (

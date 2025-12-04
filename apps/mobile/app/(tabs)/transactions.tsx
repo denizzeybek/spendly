@@ -378,19 +378,19 @@ export default function TransactionsScreen() {
                 </Box>
               </Pressable>
 
-              {/* Switches (Expense only) */}
+              {/* Shared Switch (Expense only) */}
               {editType === 'EXPENSE' && (
-                <VStack space="sm">
-                  <HStack justifyContent="space-between" alignItems="center">
-                    <Text size="md">{t('transactions.shared')}</Text>
-                    <Switch value={editIsShared} onValueChange={setEditIsShared} />
-                  </HStack>
-                  <HStack justifyContent="space-between" alignItems="center">
-                    <Text size="md">{t('transactions.recurring')}</Text>
-                    <Switch value={editIsRecurring} onValueChange={setEditIsRecurring} />
-                  </HStack>
-                </VStack>
+                <HStack justifyContent="space-between" alignItems="center">
+                  <Text size="md">{t('transactions.shared')}</Text>
+                  <Switch value={editIsShared} onValueChange={setEditIsShared} />
+                </HStack>
               )}
+
+              {/* Recurring Switch (Both Income and Expense) */}
+              <HStack justifyContent="space-between" alignItems="center">
+                <Text size="md">{t('transactions.recurring')}</Text>
+                <Switch value={editIsRecurring} onValueChange={setEditIsRecurring} />
+              </HStack>
             </VStack>
           </ModalBody>
           <ModalFooter>
