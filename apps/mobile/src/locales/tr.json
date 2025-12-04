@@ -103,7 +103,8 @@
     "homeCode": "Ev Kodu",
     "shareCode": "Kodu Paylaş",
     "members": "Üyeler",
-    "creditCards": "Kredi Kartlarım"
+    "creditCards": "Kredi Kartlarım",
+    "loans": "Kredilerim"
   },
   "creditCards": {
     "title": "Kredi Kartlarım",
@@ -124,6 +125,34 @@
       "reminderTitle": "Yarın Son Ödeme Günü",
       "reminderBody": "{{cardName}} kartının son ödeme günü yarın. Ödemeyi unutmayın!"
     }
+  },
+  "loans": {
+    "title": "Kredilerim",
+    "addLoan": "Kredi Ekle",
+    "editLoan": "Krediyi Düzenle",
+    "noLoans": "Henüz kredi yok",
+    "deleteTitle": "Krediyi Sil",
+    "deleteConfirm": "Bu krediyi silmek istediğinizden emin misiniz?",
+    "loanName": "Kredi Adı",
+    "principalAmount": "Çekilen Tutar",
+    "totalAmount": "Toplam Tutar",
+    "monthlyPayment": "Aylık Taksit",
+    "totalInstallments": "Toplam Taksit",
+    "paidInstallments": "Ödenen Taksit",
+    "remainingInstallments": "Kalan",
+    "startDate": "İlk Ödeme Tarihi",
+    "endDate": "Son Ödeme Tarihi",
+    "nextPayment": "Sonraki Ödeme",
+    "interestRate": "Faiz Oranı",
+    "notes": "Notlar",
+    "progress": "İlerleme",
+    "paidAmount": "Ödenen Tutar",
+    "remainingAmount": "Kalan Tutar",
+    "payInstallment": "Taksit Öde",
+    "payInstallmentConfirm": "{{count}} taksit ödendi olarak işaretlensin mi?",
+    "installmentPaid": "Taksit ödendi olarak işaretlendi",
+    "loanCompleted": "Kredi Tamamlandı!",
+    "installmentProgress": "{{paid}}/{{total}} taksit"
   },
   "summary": {
     "personal": "Kişisel Özet",

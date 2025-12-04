@@ -11,6 +11,7 @@ import { userRoutes } from './modules/user/user.routes';
 import { transactionRoutes } from './modules/transaction/transaction.routes';
 import { categoryRoutes } from './modules/category/category.routes';
 import { creditCardRoutes } from './modules/credit-card/credit-card.routes';
+import { loanRoutes } from './modules/loan/loan.routes';
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/credit-cards', creditCardRoutes);
+app.use('/api/loans', loanRoutes);
 
 // Error handler
 app.use(errorMiddleware);

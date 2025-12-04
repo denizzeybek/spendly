@@ -103,7 +103,8 @@
     "homeCode": "Home Code",
     "shareCode": "Share Code",
     "members": "Members",
-    "creditCards": "Credit Cards"
+    "creditCards": "Credit Cards",
+    "loans": "My Loans"
   },
   "creditCards": {
     "title": "Credit Cards",
@@ -124,6 +125,34 @@
       "reminderTitle": "Payment Due Tomorrow",
       "reminderBody": "{{cardName}} payment is due tomorrow. Don't forget to pay!"
     }
+  },
+  "loans": {
+    "title": "My Loans",
+    "addLoan": "Add Loan",
+    "editLoan": "Edit Loan",
+    "noLoans": "No loans yet",
+    "deleteTitle": "Delete Loan",
+    "deleteConfirm": "Are you sure you want to delete this loan?",
+    "loanName": "Loan Name",
+    "principalAmount": "Principal Amount",
+    "totalAmount": "Total Amount",
+    "monthlyPayment": "Monthly Payment",
+    "totalInstallments": "Total Installments",
+    "paidInstallments": "Paid Installments",
+    "remainingInstallments": "Remaining",
+    "startDate": "First Payment Date",
+    "endDate": "Last Payment Date",
+    "nextPayment": "Next Payment",
+    "interestRate": "Interest Rate",
+    "notes": "Notes",
+    "progress": "Progress",
+    "paidAmount": "Paid Amount",
+    "remainingAmount": "Remaining Amount",
+    "payInstallment": "Pay Installment",
+    "payInstallmentConfirm": "Mark {{count}} installment(s) as paid?",
+    "installmentPaid": "Installment marked as paid",
+    "loanCompleted": "Loan Completed!",
+    "installmentProgress": "{{paid}}/{{total}} installments"
   },
   "summary": {
     "personal": "Personal Summary",
