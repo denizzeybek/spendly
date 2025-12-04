@@ -1,0 +1,111 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "all": "All",
+    "confirm": "Confirm",
+    "back": "Back"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "forgotPassword": "Forgot Password",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "createHome": "Create New Home",
+    "joinHome": "Join Home",
+    "homeName": "Home Name",
+    "homeCode": "Home Code",
+    "enterHomeCode": "Enter 6-digit home code"
+  },
+  "home": {
+    "title": "Home",
+    "balance": "Balance",
+    "income": "Income",
+    "expense": "Expense",
+    "thisMonth": "This Month",
+    "recentTransactions": "Recent Transactions",
+    "viewAll": "View All"
+  },
+  "transactions": {
+    "title": "Transactions",
+    "add": "Add Transaction",
+    "income": "Income",
+    "expense": "Expense",
+    "amount": "Amount",
+    "date": "Date",
+    "category": "Category",
+    "description": "Description",
+    "shared": "Shared Expense",
+    "recurring": "Recurring",
+    "assignToCard": "Assign to Card",
+    "noTransactions": "No transactions yet"
+  },
+  "categories": {
+    "title": "Categories",
+    "bills": {
+      "rent": "Rent",
+      "dues": "Dues",
+      "electricity": "Electricity",
+      "water": "Water",
+      "gas": "Gas",
+      "internet": "Internet"
+    },
+    "transport": {
+      "motorcycle_fuel": "Motorcycle Fuel",
+      "car_fuel": "Car Fuel"
+    },
+    "subscriptions": {
+      "netflix": "Netflix",
+      "prime": "Prime Video",
+      "hbo": "HBO Max",
+      "gym": "Gym"
+    },
+    "groceries": "Groceries",
+    "health": "Health",
+    "entertainment": "Entertainment",
+    "salary": "Salary",
+    "side_income": "Side Income",
+    "other_expense": "Other Expense",
+    "other_income": "Other Income"
+  },
+  "reports": {
+    "title": "Reports",
+    "monthly": "Monthly",
+    "byCategory": "By Category",
+    "byUser": "By User",
+    "comparison": "Comparison"
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "homeSettings": "Home Settings",
+    "language": "Language",
+    "currency": "Currency",
+    "notifications": "Notifications",
+    "about": "About",
+    "homeCode": "Home Code",
+    "shareCode": "Share Code",
+    "members": "Members"
+  },
+  "summary": {
+    "personal": "Personal Summary",
+    "totalIncome": "Total Income",
+    "totalExpense": "Total Expense",
+    "sharedExpense": "My Shared Expense",
+    "personalExpense": "My Personal Expense",
+    "creditCardDebt": "Credit Card Debt",
+    "balance": "Net Balance"
+  }
+}

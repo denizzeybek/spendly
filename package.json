@@ -1,0 +1,23 @@
+{
+  "name": "spendly",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "api": "yarn workspace @spendly/api",
+    "mobile": "yarn workspace @spendly/mobile",
+    "dev:api": "yarn workspace @spendly/api dev",
+    "dev:mobile": "yarn workspace @spendly/mobile start",
+    "build:api": "yarn workspace @spendly/api build",
+    "lint": "yarn workspaces run lint",
+    "test": "yarn workspaces run test"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

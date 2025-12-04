@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --version:*)",
+      "Bash(psql:*)",
+      "Bash(npx expo:*)",
+      "Bash(git --version:*)",
+      "Bash(brew list:*)",
+      "Bash(brew install:*)",
+      "Bash(yarn install)",
+      "Bash(yarn add:*)",
+      "Bash(yarn build)",
+      "Bash(source ~/.zshrc)",
+      "Bash(source ~/.bashrc)",
+      "Bash(export NVM_DIR=\"$HOME/.nvm\":*)",
+      "Bash([ -s \"$NVM_DIR/nvm.sh\" ])",
+      "Bash(. \"$NVM_DIR/nvm.sh\")",
+      "Bash(nvm use:*)",
+      "Bash(yarn api swagger:export:*)",
+      "Bash(yarn workspace:*)",
+      "Bash(source ~/.nvm/nvm.sh)",
+      "Bash(yarn mobile:*)",
+      "Bash(curl:*)",
+      "Bash(yarn remove:*)",
+      "Bash(yarn api build:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "Bash(python3:*)",
+      "Bash(open -a Simulator)",
+      "Bash(npm install:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Bir hata oluştu",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "add": "Ekle",
+    "search": "Ara",
+    "filter": "Filtrele",
+    "all": "Tümü",
+    "confirm": "Onayla",
+    "back": "Geri"
+  },
+  "auth": {
+    "login": "Giriş Yap",
+    "register": "Kayıt Ol",
+    "logout": "Çıkış Yap",
+    "email": "E-posta",
+    "password": "Şifre",
+    "name": "İsim",
+    "forgotPassword": "Şifremi Unuttum",
+    "noAccount": "Hesabınız yok mu?",
+    "hasAccount": "Zaten hesabınız var mı?",
+    "createHome": "Yeni Ev Oluştur",
+    "joinHome": "Eve Katıl",
+    "homeName": "Ev Adı",
+    "homeCode": "Ev Kodu",
+    "enterHomeCode": "6 haneli ev kodunu girin"
+  },
+  "home": {
+    "title": "Ana Sayfa",
+    "balance": "Bakiye",
+    "income": "Gelir",
+    "expense": "Gider",
+    "thisMonth": "Bu Ay",
+    "recentTransactions": "Son İşlemler",
+    "viewAll": "Tümünü Gör"
+  },
+  "transactions": {
+    "title": "İşlemler",
+    "add": "İşlem Ekle",
+    "income": "Gelir",
+    "expense": "Gider",
+    "amount": "Tutar",
+    "date": "Tarih",
+    "category": "Kategori",
+    "description": "Açıklama",
+    "shared": "Ortak Harcama",
+    "recurring": "Tekrarlayan",
+    "assignToCard": "Kredi Kartına Ata",
+    "noTransactions": "Henüz işlem yok"
+  },
+  "categories": {
+    "title": "Kategoriler",
+    "bills": {
+      "rent": "Kira",
+      "dues": "Aidat",
+      "electricity": "Elektrik",
+      "water": "Su",
+      "gas": "Doğalgaz",
+      "internet": "İnternet"
+    },
+    "transport": {
+      "motorcycle_fuel": "Motor Yakıt",
+      "car_fuel": "Araba Yakıt"
+    },
+    "subscriptions": {
+      "netflix": "Netflix",
+      "prime": "Prime Video",
+      "hbo": "HBO Max",
+      "gym": "Spor Salonu"
+    },
+    "groceries": "Market",
+    "health": "Sağlık",
+    "entertainment": "Eğlence",
+    "salary": "Maaş",
+    "side_income": "Ek Gelir",
+    "other_expense": "Diğer Gider",
+    "other_income": "Diğer Gelir"
+  },
+  "reports": {
+    "title": "Raporlar",
+    "monthly": "Aylık",
+    "byCategory": "Kategoriye Göre",
+    "byUser": "Kişiye Göre",
+    "comparison": "Karşılaştırma"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "profile": "Profil",
+    "homeSettings": "Ev Ayarları",
+    "language": "Dil",
+    "currency": "Para Birimi",
+    "notifications": "Bildirimler",
+    "about": "Hakkında",
+    "homeCode": "Ev Kodu",
+    "shareCode": "Kodu Paylaş",
+    "members": "Üyeler"
+  },
+  "summary": {
+    "personal": "Kişisel Özet",
+    "totalIncome": "Toplam Gelir",
+    "totalExpense": "Toplam Gider",
+    "sharedExpense": "Ortak Harcama Payım",
+    "personalExpense": "Kişisel Harcamam",
+    "creditCardDebt": "Kredi Kartı Borcu",
+    "balance": "Net Bakiye"
+  }
+}
