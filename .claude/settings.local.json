@@ -30,7 +30,9 @@
       "Bash(npm install:*)",
       "Bash(npx eslint:*)",
       "Bash(npx openapi-typescript-codegen:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

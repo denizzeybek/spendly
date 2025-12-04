@@ -33,6 +33,9 @@ export default function TabLayout() {
           backgroundColor: bgColor,
         },
         headerTintColor: textColor,
+        sceneStyle: {
+          backgroundColor: isDark ? '#0A0A0A' : '#FAFAFA',
+        },
       }}
     >
       <Tabs.Screen

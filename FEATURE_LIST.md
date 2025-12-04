@@ -10,6 +10,7 @@
 - [x] Kredi kartının hesap kesim tarihi olmalı. Default olarak ayın 1 i gelmeli ama değiştirilebilmeli.
     - hesap kesim tarihinden 10 gün sonrası kredi kartının son ödeme günü olmalı.
 - [x] Raporlar ekranında kişiye göre dediğimde tutarlar 0 geliyor. düzelt
+- [x] Dark modea geçince hala beyaz olan yerler var. bu içerik tüm sayfayı kaplamadığında gözleniyor. düzelt
 
 ## Yapılacak
 - [ ] Kredi kartı son ödeme günü için push notification (bir gün önce ve son ödeme gününde)
@@ -19,6 +20,5 @@
 - [ ] Raporlarda datepicker olmalı. Range seçilmeli ve o seçili range içindeki alan göz önünde bulundurulmalı.
     - initial range mevcut ayın ilk ve son gününü kapsamalı
 - [ ] Raporlarda şu an piechart yok? ekle
-- [ ] Dark modea geçince hala beyaz olan yerler var. bu içerik tüm sayfayı kaplamadığında gözleniyor. düzelt
 - [ ] Maaşa brüt net hesaplama özelliği eklememiz lazım
     - onun için bir api service bulmamız lazım context 7 ile, bulamazsak custom backend'e kendimiz eklemeliyiz

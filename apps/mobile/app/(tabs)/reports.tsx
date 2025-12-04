@@ -44,6 +44,7 @@ export default function ReportsScreen() {
   return (
     <ScrollView
       style={{ flex: 1 }}
+      contentContainerStyle={{ flexGrow: 1 }}
       refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}
     >
       <Box

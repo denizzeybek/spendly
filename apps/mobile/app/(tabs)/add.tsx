@@ -94,7 +94,10 @@ export default function AddTransactionScreen() {
   };
 
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <ScrollView
+      style={{ flex: 1 }}
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
       <Box
         flex={1}
         bg="$backgroundLight50"
