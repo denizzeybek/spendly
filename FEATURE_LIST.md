@@ -19,8 +19,16 @@
     - ✅ Kart silindiğinde bildirimler iptal ediliyor
     - ✅ Son ödeme günü ve 1 gün önce bildirim gönderiliyor (saat 10:00)
 
+- [x] Kredilerim ekranı
+    - ✅ Backend'de Loan modeli oluşturuldu (taksit takibi, faiz oranı, notlar)
+    - ✅ CRUD API endpoint'leri (/api/loans)
+    - ✅ Taksit ödeme endpoint'i (/api/loans/:id/pay)
+    - ✅ Kredilerim ekranı (liste, ekleme, düzenleme, silme)
+    - ✅ Taksit ilerleme çubuğu
+    - ✅ Taksit ödeme butonu
+    - ✅ Ayarlar ekranından erişim
+
 ## Yapılacak
-- [ ] Kredilerim ekranı. Burda gider olarak kategori kredi seçildiyse o gözükmeli. Bu düzenli bir kredi olabilir. Kredi yaratılırken        başlangıç, bitiş tarihi olmalı. Mesela ocak 1 de kredi başladı. ilk ödemesi şubat 1, son ödemesi temmuz 1. biz mart ayında ödemeyi yaptıysak 2/6 şeklinde bir gösterime sahip olmalı ki kaç taksitimiz kaldığını bilelim. Ayrıca kredi öderken ne kadar çektiğimizi, ne kadar geriye ödeyeceğimizi de sormalı. Ama unutma kredi de bir giderdir.
 - [ ] Kategori ekle, düzenle, sil eksik
 - [ ] Kategorilerin yanında hem türkçe hem ingilizce isim gösterilmemeli, seçili dile göre gösterilmeli
 - [ ] Raporlarda datepicker olmalı. Range seçilmeli ve o seçili range içindeki alan göz önünde bulundurulmalı.
