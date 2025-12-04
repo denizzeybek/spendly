@@ -111,7 +111,12 @@
     "cardName": "Kart Adı",
     "noCards": "Henüz kredi kartı yok",
     "deleteTitle": "Kartı Sil",
-    "deleteConfirm": "Bu kartı silmek istediğinizden emin misiniz?"
+    "deleteConfirm": "Bu kartı silmek istediğinizden emin misiniz?",
+    "billingDay": "Hesap Kesim Günü",
+    "dueDay": "Son Ödeme",
+    "dayOfMonth": "Ayın {{day}}. günü",
+    "selectBillingDay": "Hesap Kesim Günü Seç",
+    "dueDayInfo": "Son ödeme günü hesap kesiminden 10 gün sonradır"
   },
   "summary": {
     "personal": "Kişisel Özet",

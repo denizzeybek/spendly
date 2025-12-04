@@ -4,6 +4,7 @@ export interface ICreditCardDocument extends Document {
   _id: mongoose.Types.ObjectId;
   name: string;
   userId: mongoose.Types.ObjectId;
+  billingDay: number; // Day of month (1-31) when statement is generated
   createdAt: Date;
 }
 
@@ -18,6 +19,13 @@ const creditCardSchema = new Schema<ICreditCardDocument>(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
+    },
+    billingDay: {
+      type: Number,
+      required: true,
+      default: 1,
+      min: 1,
+      max: 31,
     },
   },
   {
