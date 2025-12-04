@@ -41,6 +41,10 @@ router.get('/', creditCardController.list);
  *             properties:
  *               name:
  *                 type: string
+ *               billingDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Billing/statement date (defaults to first of current month)
  *     responses:
  *       201:
  *         description: Credit card created
@@ -70,6 +74,10 @@ router.post('/', validate(createCreditCardSchema), creditCardController.create);
  *             properties:
  *               name:
  *                 type: string
+ *               billingDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Billing/statement date
  *     responses:
  *       200:
  *         description: Credit card updated

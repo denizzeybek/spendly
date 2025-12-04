@@ -9,11 +9,17 @@
     - kredi kartlarım ekranına ayarlardan gitsin
 - [x] Kredi kartının hesap kesim tarihi olmalı. Default olarak ayın 1 i gelmeli ama değiştirilebilmeli.
     - hesap kesim tarihinden 10 gün sonrası kredi kartının son ödeme günü olmalı.
+    - ✅ DateTimePicker ile tarih seçimi eklendi (iOS spinner, Android native picker)
 - [x] Raporlar ekranında kişiye göre dediğimde tutarlar 0 geliyor. düzelt
 - [x] Dark modea geçince hala beyaz olan yerler var. bu içerik tüm sayfayı kaplamadığında gözleniyor. düzelt
+- [x] Kredi kartı son ödeme günü için push notification (bir gün önce ve son ödeme gününde)
+    - ✅ expo-notifications paketi eklendi
+    - ✅ Notification servisi oluşturuldu (src/services/notification.service.ts)
+    - ✅ Kart oluşturma/güncelleme sırasında bildirimler schedule ediliyor
+    - ✅ Kart silindiğinde bildirimler iptal ediliyor
+    - ✅ Son ödeme günü ve 1 gün önce bildirim gönderiliyor (saat 10:00)
 
 ## Yapılacak
-- [ ] Kredi kartı son ödeme günü için push notification (bir gün önce ve son ödeme gününde)
 - [ ] Kredilerim ekranı. Burda gider olarak kategori kredi seçildiyse o gözükmeli. Bu düzenli bir kredi olabilir. Kredi yaratılırken        başlangıç, bitiş tarihi olmalı. Mesela ocak 1 de kredi başladı. ilk ödemesi şubat 1, son ödemesi temmuz 1. biz mart ayında ödemeyi yaptıysak 2/6 şeklinde bir gösterime sahip olmalı ki kaç taksitimiz kaldığını bilelim. Ayrıca kredi öderken ne kadar çektiğimizi, ne kadar geriye ödeyeceğimizi de sormalı.
 - [ ] Kategori ekle, düzenle, sil eksik
 - [ ] Kategorilerin yanında hem türkçe hem ingilizce isim gösterilmemeli, seçili dile göre gösterilmeli

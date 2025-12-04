@@ -4,9 +4,15 @@ export interface ICreditCardDocument extends Document {
   _id: mongoose.Types.ObjectId;
   name: string;
   userId: mongoose.Types.ObjectId;
-  billingDay: number; // Day of month (1-31) when statement is generated
+  billingDate: Date; // Statement/billing date
   createdAt: Date;
 }
+
+// Helper to get first day of current month
+const getFirstDayOfMonth = (): Date => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), 1);
+};
 
 const creditCardSchema = new Schema<ICreditCardDocument>(
   {
@@ -20,12 +26,10 @@ const creditCardSchema = new Schema<ICreditCardDocument>(
       ref: 'User',
       required: true,
     },
-    billingDay: {
-      type: Number,
+    billingDate: {
+      type: Date,
       required: true,
-      default: 1,
-      min: 1,
-      max: 31,
+      default: getFirstDayOfMonth,
     },
   },
   {

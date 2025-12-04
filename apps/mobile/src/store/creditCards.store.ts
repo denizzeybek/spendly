@@ -13,8 +13,8 @@ interface CreditCardsState {
 
   // Actions
   fetchCreditCards: () => Promise<void>;
-  createCreditCard: (name: string, billingDay?: number) => Promise<void>;
-  updateCreditCard: (id: string, name: string, billingDay?: number) => Promise<void>;
+  createCreditCard: (name: string, billingDate?: string) => Promise<void>;
+  updateCreditCard: (id: string, name: string, billingDate?: string) => Promise<void>;
   deleteCreditCard: (id: string) => Promise<void>;
   clearError: () => void;
 }
@@ -39,10 +39,10 @@ export const useCreditCardsStore = create<CreditCardsState>((set, get) => ({
     }
   },
 
-  createCreditCard: async (name: string, billingDay: number = 1) => {
+  createCreditCard: async (name: string, billingDate?: string) => {
     set({ isCreating: true, error: null });
     try {
-      const response = await CreditCardsService.postApiCreditCards({ name, billingDay });
+      const response = await CreditCardsService.postApiCreditCards({ name, billingDate });
       set({
         creditCards: [response.data, ...get().creditCards],
         isCreating: false,
@@ -55,10 +55,10 @@ export const useCreditCardsStore = create<CreditCardsState>((set, get) => ({
     }
   },
 
-  updateCreditCard: async (id: string, name: string, billingDay?: number) => {
+  updateCreditCard: async (id: string, name: string, billingDate?: string) => {
     set({ isUpdating: true, error: null });
     try {
-      const response = await CreditCardsService.patchApiCreditCards(id, { name, billingDay });
+      const response = await CreditCardsService.patchApiCreditCards(id, { name, billingDate });
       set({
         creditCards: get().creditCards.map((card) =>
           card.id === id ? response.data : card

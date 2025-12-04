@@ -92,6 +92,7 @@ const options: swaggerJsdoc.Options = {
             id: { type: 'string' },
             name: { type: 'string' },
             userId: { type: 'string' },
+            billingDate: { type: 'string', format: 'date-time' },
             createdAt: { type: 'string', format: 'date-time' },
           },
         },

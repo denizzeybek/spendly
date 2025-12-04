@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const createCreditCardSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  billingDay: z.number().min(1).max(31).default(1),
+  billingDate: z.string().or(z.date()).optional(), // ISO date string or Date, defaults to first of current month
 });
 
 export const updateCreditCardSchema = createCreditCardSchema.partial();

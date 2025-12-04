@@ -6,6 +6,7 @@ export type CreditCard = {
     id?: string;
     name?: string;
     userId?: string;
+    billingDate?: string;
     createdAt?: string;
 };
 

@@ -199,6 +199,10 @@
           "userId": {
             "type": "string"
           },
+          "billingDate": {
+            "type": "string",
+            "format": "date-time"
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -676,6 +680,11 @@
                 "properties": {
                   "name": {
                     "type": "string"
+                  },
+                  "billingDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Billing/statement date (defaults to first of current month)"
                   }
                 }
               }
@@ -719,6 +728,11 @@
                 "properties": {
                   "name": {
                     "type": "string"
+                  },
+                  "billingDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Billing/statement date"
                   }
                 }
               }

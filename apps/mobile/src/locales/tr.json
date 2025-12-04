@@ -12,7 +12,8 @@
     "all": "Tümü",
     "confirm": "Onayla",
     "back": "Geri",
-    "none": "Yok"
+    "none": "Yok",
+    "done": "Tamam"
   },
   "auth": {
     "login": "Giriş Yap",
@@ -116,7 +117,13 @@
     "dueDay": "Son Ödeme",
     "dayOfMonth": "Ayın {{day}}. günü",
     "selectBillingDay": "Hesap Kesim Günü Seç",
-    "dueDayInfo": "Son ödeme günü hesap kesiminden 10 gün sonradır"
+    "dueDayInfo": "Son ödeme günü hesap kesiminden 10 gün sonradır",
+    "notifications": {
+      "dueDayTitle": "Bugün Son Ödeme Günü",
+      "dueDayBody": "{{cardName}} kartının son ödeme günü bugün!",
+      "reminderTitle": "Yarın Son Ödeme Günü",
+      "reminderBody": "{{cardName}} kartının son ödeme günü yarın. Ödemeyi unutmayın!"
+    }
   },
   "summary": {
     "personal": "Kişisel Özet",

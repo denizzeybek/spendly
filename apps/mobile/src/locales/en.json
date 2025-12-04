@@ -12,7 +12,8 @@
     "all": "All",
     "confirm": "Confirm",
     "back": "Back",
-    "none": "None"
+    "none": "None",
+    "done": "Done"
   },
   "auth": {
     "login": "Login",
@@ -116,7 +117,13 @@
     "dueDay": "Due Day",
     "dayOfMonth": "Day {{day}} of month",
     "selectBillingDay": "Select Billing Day",
-    "dueDayInfo": "Payment due date is 10 days after billing day"
+    "dueDayInfo": "Payment due date is 10 days after billing day",
+    "notifications": {
+      "dueDayTitle": "Payment Due Today",
+      "dueDayBody": "{{cardName}} payment is due today!",
+      "reminderTitle": "Payment Due Tomorrow",
+      "reminderBody": "{{cardName}} payment is due tomorrow. Don't forget to pay!"
+    }
   },
   "summary": {
     "personal": "Personal Summary",

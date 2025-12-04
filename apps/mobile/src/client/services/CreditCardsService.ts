@@ -26,6 +26,10 @@ export class CreditCardsService {
     public static postApiCreditCards(
         requestBody: {
             name: string;
+            /**
+             * Billing/statement date (defaults to first of current month)
+             */
+            billingDate?: string;
         },
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
@@ -46,6 +50,10 @@ export class CreditCardsService {
         id: string,
         requestBody: {
             name?: string;
+            /**
+             * Billing/statement date
+             */
+            billingDate?: string;
         },
     ): CancelablePromise<any> {
         return __request(OpenAPI, {

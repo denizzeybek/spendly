@@ -15,6 +15,7 @@
     "test": "yarn workspaces run test"
   },
   "devDependencies": {
+    "sharp": "^0.34.5",
     "typescript": "^5.3.3"
   },
   "engines": {

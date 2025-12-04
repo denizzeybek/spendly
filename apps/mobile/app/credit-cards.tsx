@@ -1,6 +1,7 @@
-import { useCallback, useState } from 'react';
-import { FlatList, RefreshControl, Alert, Modal, View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { useCallback, useState, useEffect } from 'react';
+import { FlatList, RefreshControl, Alert, Modal, View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import {
   Box,
   VStack,
@@ -20,12 +21,17 @@ import { useFocusEffect, Stack } from 'expo-router';
 import { Plus, CreditCard, Trash2, Edit2, X, Calendar, CalendarClock } from 'lucide-react-native';
 import { useCreditCardsStore, useThemeStore } from '../src/store';
 import { colors } from '../src/constants/theme';
+import { formatDate, getFirstDayOfMonth, addDays } from '../src/utils';
+import {
+  requestNotificationPermissions,
+  scheduleCreditCardNotifications,
+  cancelCreditCardNotifications,
+} from '../src/services';
 import type { CreditCard as CreditCardType } from '../src/client';
 
-// Calculate payment due date (billing day + 10 days)
-const getPaymentDueDay = (billingDay: number): number => {
-  const dueDay = billingDay + 10;
-  return dueDay > 31 ? dueDay - 31 : dueDay;
+// Calculate payment due date (billing date + 10 days)
+const getPaymentDueDate = (billingDate: Date): Date => {
+  return addDays(billingDate, 10);
 };
 
 export default function CreditCardsScreen() {
@@ -43,10 +49,20 @@ export default function CreditCardsScreen() {
   } = useCreditCardsStore();
 
   const [showModal, setShowModal] = useState(false);
-  const [showDayPicker, setShowDayPicker] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [editingCard, setEditingCard] = useState<CreditCardType | null>(null);
   const [cardName, setCardName] = useState('');
-  const [billingDay, setBillingDay] = useState(1);
+  const [billingDate, setBillingDate] = useState<Date>(getFirstDayOfMonth());
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+
+  // Request notification permissions on mount
+  useEffect(() => {
+    const initNotifications = async () => {
+      const granted = await requestNotificationPermissions();
+      setNotificationsEnabled(granted);
+    };
+    initNotifications();
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -57,14 +73,14 @@ export default function CreditCardsScreen() {
   const handleAddPress = () => {
     setEditingCard(null);
     setCardName('');
-    setBillingDay(1);
+    setBillingDate(getFirstDayOfMonth());
     setShowModal(true);
   };
 
   const handleEditPress = (card: CreditCardType) => {
     setEditingCard(card);
     setCardName(card.name || '');
-    setBillingDay(card.billingDay || 1);
+    setBillingDate(card.billingDate ? new Date(card.billingDate) : getFirstDayOfMonth());
     setShowModal(true);
   };
 
@@ -80,6 +96,8 @@ export default function CreditCardsScreen() {
           onPress: async () => {
             try {
               await deleteCreditCard(card.id || '');
+              // Cancel notifications for this card
+              await cancelCreditCardNotifications(card.id || '');
             } catch {
               // Error handled in store
             }
@@ -93,15 +111,36 @@ export default function CreditCardsScreen() {
     if (!cardName.trim()) return;
 
     try {
+      const billingDateISO = billingDate.toISOString();
+      let savedCardId: string;
+
       if (editingCard) {
-        await updateCreditCard(editingCard.id || '', cardName.trim(), billingDay);
+        await updateCreditCard(editingCard.id || '', cardName.trim(), billingDateISO);
+        savedCardId = editingCard.id || '';
       } else {
-        await createCreditCard(cardName.trim(), billingDay);
+        await createCreditCard(cardName.trim(), billingDateISO);
+        // Get the newly created card ID from the store
+        const newCards = useCreditCardsStore.getState().creditCards;
+        savedCardId = newCards[0]?.id || '';
       }
+
+      // Schedule notifications if permissions are granted
+      if (notificationsEnabled && savedCardId) {
+        await scheduleCreditCardNotifications({
+          cardId: savedCardId,
+          cardName: cardName.trim(),
+          billingDate: billingDate,
+          titleDueDay: t('creditCards.notifications.dueDayTitle'),
+          titleReminder: t('creditCards.notifications.reminderTitle'),
+          bodyDueDay: t('creditCards.notifications.dueDayBody'),
+          bodyReminder: t('creditCards.notifications.reminderBody'),
+        });
+      }
+
       setShowModal(false);
       setEditingCard(null);
       setCardName('');
-      setBillingDay(1);
+      setBillingDate(getFirstDayOfMonth());
     } catch {
       // Error handled in store
     }
@@ -111,17 +150,21 @@ export default function CreditCardsScreen() {
     setShowModal(false);
     setEditingCard(null);
     setCardName('');
-    setBillingDay(1);
+    setBillingDate(getFirstDayOfMonth());
   };
 
-  const handleDaySelect = (day: number) => {
-    setBillingDay(day);
-    setShowDayPicker(false);
+  const handleDateChange = (_event: unknown, selectedDate?: Date) => {
+    if (Platform.OS === 'android') {
+      setShowDatePicker(false);
+    }
+    if (selectedDate) {
+      setBillingDate(selectedDate);
+    }
   };
 
   const renderCard = ({ item }: { item: CreditCardType }) => {
-    const cardBillingDay = item.billingDay || 1;
-    const paymentDueDay = getPaymentDueDay(cardBillingDay);
+    const cardBillingDate = item.billingDate ? new Date(item.billingDate) : getFirstDayOfMonth();
+    const paymentDueDate = getPaymentDueDate(cardBillingDate);
 
     return (
       <Box
@@ -147,17 +190,17 @@ export default function CreditCardsScreen() {
               <Text size="lg" fontWeight="$medium" numberOfLines={1}>
                 {item.name}
               </Text>
-              <HStack space="lg" mt="$1">
+              <HStack space="lg" mt="$1" flexWrap="wrap">
                 <HStack space="xs" alignItems="center">
                   <Calendar size={14} color="#A3A3A3" />
                   <Text size="xs" color="$textLight500" sx={{ _dark: { color: '$textDark400' } }}>
-                    {t('creditCards.billingDay')}: {cardBillingDay}
+                    {t('creditCards.billingDay')}: {formatDate(cardBillingDate)}
                   </Text>
                 </HStack>
                 <HStack space="xs" alignItems="center">
                   <CalendarClock size={14} color="#A3A3A3" />
                   <Text size="xs" color="$textLight500" sx={{ _dark: { color: '$textDark400' } }}>
-                    {t('creditCards.dueDay')}: {paymentDueDay}
+                    {t('creditCards.dueDay')}: {formatDate(paymentDueDate)}
                   </Text>
                 </HStack>
               </HStack>
@@ -188,9 +231,6 @@ export default function CreditCardsScreen() {
   const modalBgColor = colorMode === 'dark' ? '#1a1a1a' : '#ffffff';
   const textColor = colorMode === 'dark' ? '#ffffff' : '#000000';
   const borderColor = colorMode === 'dark' ? '#333333' : '#e0e0e0';
-
-  // Generate days 1-31 for picker
-  const days = Array.from({ length: 31 }, (_, i) => i + 1);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: bgColor }}>
@@ -268,7 +308,7 @@ export default function CreditCardsScreen() {
                 <Text size="sm" color="$textLight500" sx={{ _dark: { color: '$textDark400' } }}>
                   {t('creditCards.billingDay')}
                 </Text>
-                <Pressable onPress={() => setShowDayPicker(true)}>
+                <Pressable onPress={() => setShowDatePicker(true)}>
                   <Box
                     borderWidth={1}
                     borderColor={borderColor}
@@ -279,10 +319,10 @@ export default function CreditCardsScreen() {
                       <HStack space="md" alignItems="center">
                         <Calendar size={20} color={colors.primary} />
                         <Text style={{ color: textColor }}>
-                          {t('creditCards.dayOfMonth', { day: billingDay })}
+                          {formatDate(billingDate)}
                         </Text>
                       </HStack>
-                      <Text color="$textLight400">{t('creditCards.dueDay')}: {getPaymentDueDay(billingDay)}</Text>
+                      <Text color="$textLight400">{t('creditCards.dueDay')}: {formatDate(getPaymentDueDate(billingDate))}</Text>
                     </HStack>
                   </Box>
                 </Pressable>
@@ -290,6 +330,27 @@ export default function CreditCardsScreen() {
                   {t('creditCards.dueDayInfo')}
                 </Text>
               </VStack>
+
+              {/* iOS inline date picker */}
+              {Platform.OS === 'ios' && showDatePicker && (
+                <Box mt="$2">
+                  <DateTimePicker
+                    value={billingDate}
+                    mode="date"
+                    display="spinner"
+                    onChange={handleDateChange}
+                    themeVariant={colorMode === 'dark' ? 'dark' : 'light'}
+                  />
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onPress={() => setShowDatePicker(false)}
+                    mt="$2"
+                  >
+                    <ButtonText>{t('common.done')}</ButtonText>
+                  </Button>
+                </Box>
+              )}
             </VStack>
             <ButtonGroup space="md" style={styles.modalFooter}>
               <Button
@@ -313,50 +374,15 @@ export default function CreditCardsScreen() {
         </KeyboardAvoidingView>
       </Modal>
 
-      {/* Day Picker Modal */}
-      <Modal
-        visible={showDayPicker}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setShowDayPicker(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <Pressable style={styles.modalBackdrop} onPress={() => setShowDayPicker(false)} />
-          <View style={[styles.dayPickerContent, { backgroundColor: modalBgColor }]}>
-            <View style={styles.modalHeader}>
-              <Heading size="md" style={{ color: textColor }}>
-                {t('creditCards.selectBillingDay')}
-              </Heading>
-              <Pressable onPress={() => setShowDayPicker(false)} p="$2">
-                <X size={24} color={textColor} />
-              </Pressable>
-            </View>
-            <ScrollView style={styles.dayPickerScroll} contentContainerStyle={styles.dayGrid}>
-              {days.map((day) => (
-                <Pressable
-                  key={day}
-                  onPress={() => handleDaySelect(day)}
-                  style={[
-                    styles.dayButton,
-                    { borderColor },
-                    billingDay === day && { backgroundColor: colors.primary, borderColor: colors.primary },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.dayText,
-                      { color: textColor },
-                      billingDay === day && { color: '#ffffff' },
-                    ]}
-                  >
-                    {day}
-                  </Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
+      {/* Android Date Picker */}
+      {Platform.OS === 'android' && showDatePicker && (
+        <DateTimePicker
+          value={billingDate}
+          mode="date"
+          display="default"
+          onChange={handleDateChange}
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -389,33 +415,5 @@ const styles = StyleSheet.create({
   modalFooter: {
     paddingHorizontal: 16,
     paddingTop: 8,
-  },
-  dayPickerContent: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingBottom: 34,
-    maxHeight: '60%',
-  },
-  dayPickerScroll: {
-    flexGrow: 0,
-  },
-  dayGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    padding: 16,
-    justifyContent: 'flex-start',
-  },
-  dayButton: {
-    width: '14%',
-    aspectRatio: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: 8,
-    margin: '0.5%',
-  },
-  dayText: {
-    fontSize: 16,
-    fontWeight: '500',
   },
 });
