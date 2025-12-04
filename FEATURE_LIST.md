@@ -20,13 +20,18 @@
     - ✅ Son ödeme günü ve 1 gün önce bildirim gönderiliyor (saat 10:00)
 
 - [x] Kredilerim ekranı
-    - ✅ Backend'de Loan modeli oluşturuldu (taksit takibi, faiz oranı, notlar)
+    - ✅ Backend'de Loan modeli oluşturuldu (taksit takibi, faiz oranı)
     - ✅ CRUD API endpoint'leri (/api/loans)
     - ✅ Taksit ödeme endpoint'i (/api/loans/:id/pay)
     - ✅ Kredilerim ekranı (liste, ekleme, düzenleme, silme)
     - ✅ Taksit ilerleme çubuğu
     - ✅ Taksit ödeme butonu
     - ✅ Ayarlar ekranından erişim
+    - ✅ İlk ve son ödeme tarihi date picker ile seçiliyor
+    - ✅ Toplam taksit sayısı tarih aralığından otomatik hesaplanıyor
+    - ✅ Faiz oranı çekilen ve toplam tutardan otomatik hesaplanıyor
+    - ✅ Taksit ödendiğinde otomatik gider transaction'ı oluşuyor
+    - ✅ "Kredi Taksiti" kategorisi ile işlemler listesinde görünüyor
 
 ## Yapılacak
 - [ ] Kategori ekle, düzenle, sil eksik
