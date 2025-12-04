@@ -4,7 +4,18 @@
 /* eslint-disable */
 export type Category = {
     id?: string;
+    /**
+     * Deprecated - use nameTr/nameEn instead
+     */
     name?: string;
+    /**
+     * Turkish name
+     */
+    nameTr?: string;
+    /**
+     * English name
+     */
+    nameEn?: string;
     icon?: string;
     color?: string;
     type?: Category.type;

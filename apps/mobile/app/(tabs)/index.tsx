@@ -11,11 +11,12 @@ import { useTranslation } from 'react-i18next';
 import { useFocusEffect } from 'expo-router';
 import { ArrowDownLeft, ArrowUpRight } from 'lucide-react-native';
 import { useAuthStore, useHomeStore } from '../../src/store';
-import { formatCurrency } from '../../src/utils';
+import { formatCurrency, getCategoryName } from '../../src/utils';
 import { colors } from '../../src/constants/theme';
 
 export default function HomeScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLang = (i18n.language?.substring(0, 2) || 'tr') as 'tr' | 'en';
   const { home } = useAuthStore();
   const { summary, isLoading, fetchSummary } = useHomeStore();
 
@@ -143,7 +144,7 @@ export default function HomeScreen() {
                         bg={cat.categoryColor}
                       />
                       <Text size="sm" numberOfLines={1} flex={1}>
-                        {t(cat.categoryName || '')}
+                        {getCategoryName({ nameTr: cat.categoryNameTr, nameEn: cat.categoryNameEn, name: cat.categoryName }, currentLang)}
                       </Text>
                     </HStack>
                     <HStack space="sm" alignItems="center">

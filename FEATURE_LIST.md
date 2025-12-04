@@ -32,15 +32,15 @@
     - ✅ Faiz oranı çekilen ve toplam tutardan otomatik hesaplanıyor
     - ✅ Taksit ödendiğinde otomatik gider transaction'ı oluşuyor
     - ✅ "Kredi Taksiti" kategorisi ile işlemler listesinde görünüyor
+    - ✅ Kategori ekle, düzenle, sil eksik
+    - ✅ Kategorilerin yanında hem türkçe hem ingilizce isim gösterilmemeli, seçili dile göre gösterilmeli
 
 ## Yapılacak
-- [ ] Kategori ekle, düzenle, sil eksik
-- [ ] Kategorilerin yanında hem türkçe hem ingilizce isim gösterilmemeli, seçili dile göre gösterilmeli
-- [ ] Ana ekrandaki gelir ve giderlerde user bazlı bir kırılıma ihtiyaç var. yani 2 kişi var diyelim. bunlardan biri 4x kazanmış ama 2x harcamış. diğeri de 2x kazanmış ama x harcamış. bunları kırılım olarak göstermeliyiz.
+- [ ] Ana ekrandaki gelir ve giderlerde user bazlı bir kırılıma ihtiyaç var. yani 2 kişi var diyelim. bunlardan biri 4x kazanmış ama 2x harcamış. diğeri de 2x kazanmış ama x harcamış. bunları kırılım olarak göstermeliyiz. Fakat burda eğer bir harcama ortak olarak işaretlendiyse her iki tarafa da yansımalı bunu unutma!
 - [ ] Aynı sessiondaki kişiler arasında para transferi yapılabilmeli. Bunu işlemlerde göstermeliyiz, raporlara yansımalı aynı zamanda gelir gider tablolarına da yansımalı. Aslında total para değişmiyor ama aynı ev içindeki kişiler bunu ui'a baktığında kolayca anlayabilmeli.
 - [ ] Raporlarda datepicker olmalı. Range seçilmeli ve o seçili range içindeki alan göz önünde bulundurulmalı.
     - initial range mevcut ayın ilk ve son gününü kapsamalı
 - [ ] Raporlarda şu an piechart yok? ekle
+- [ ] Bu uygulamaya bir de todo listesi ekle. Checklist şeklinde olsun. Aynı ev içinde 2 kişi var diyelim mesela. Ben yeni bir item eklediğimde (sadece ekleme yapıldığında) karşı tarafa notification gitsin. {userName} {itemName}'i {listName} e ekledi. şeklinde. Yani liste birden fazla olabilir liste eklerken önce liste adı eklemeli sonra içinde her alt satıra geçtiğinde checklist item olmalı. 
 - [ ] Maaşa brüt net hesaplama özelliği eklememiz lazım
     - onun için bir api service bulmamız lazım context 7 ile, bulamazsak custom backend'e kendimiz eklemeliyiz
-- [ ] Bu uygulamaya bir de ortak alınacaklar listesi ekle. Checklist şeklinde olsun. Aynı ev içinde 2 kişi var diyelim mesela. Ben yeni bir item eklediğimde (sadece ekleme yapıldığında) karşı tarafa notification gitsin. {userName} {itemName}'i {listName} e ekledi. şeklinde. Yani liste birden fazla olabilir liste eklerken önce liste adı eklemeli sonra içinde her alt satıra geçtiğinde checklist item olmalı. 

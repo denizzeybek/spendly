@@ -10,7 +10,18 @@ export type MonthlySummary = {
     balance?: number;
     byCategory?: Array<{
         categoryId?: string;
+        /**
+         * Deprecated - use categoryNameTr/categoryNameEn
+         */
         categoryName?: string;
+        /**
+         * Turkish category name
+         */
+        categoryNameTr?: string;
+        /**
+         * English category name
+         */
+        categoryNameEn?: string;
         categoryIcon?: string;
         categoryColor?: string;
         total?: number;

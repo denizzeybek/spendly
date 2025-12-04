@@ -59,6 +59,22 @@
   },
   "categories": {
     "title": "Categories",
+    "addCategory": "Add Category",
+    "editCategory": "Edit Category",
+    "deleteTitle": "Delete Category",
+    "deleteConfirm": "Are you sure you want to delete this category?",
+    "cannotDelete": "Cannot Delete",
+    "defaultCategoryWarning": "Default categories cannot be deleted.",
+    "name": "Category Name",
+    "namePlaceholder": "e.g. Education",
+    "icon": "Icon",
+    "color": "Color",
+    "type": "Category Type",
+    "both": "Both",
+    "typeBoth": "Income & Expense",
+    "default": "Default",
+    "preview": "Preview",
+    "noCategories": "No categories yet",
     "bills": {
       "rent": "Rent",
       "dues": "Dues",
@@ -105,7 +121,8 @@
     "shareCode": "Share Code",
     "members": "Members",
     "creditCards": "Credit Cards",
-    "loans": "My Loans"
+    "loans": "My Loans",
+    "categories": "Categories"
   },
   "creditCards": {
     "title": "Credit Cards",

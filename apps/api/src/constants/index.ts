@@ -2,7 +2,8 @@ import { CategoryType } from '../types';
 
 // Default Categories
 export interface DefaultCategory {
-  name: string;
+  nameTr: string;
+  nameEn: string;
   icon: string;
   color: string;
   type: CategoryType;
@@ -10,35 +11,35 @@ export interface DefaultCategory {
 
 export const DEFAULT_EXPENSE_CATEGORIES: DefaultCategory[] = [
   // Bills
-  { name: 'categories.bills.rent', icon: 'home', color: '#E57373', type: 'EXPENSE' },
-  { name: 'categories.bills.dues', icon: 'building', color: '#EF5350', type: 'EXPENSE' },
-  { name: 'categories.bills.electricity', icon: 'flash', color: '#F48FB1', type: 'EXPENSE' },
-  { name: 'categories.bills.water', icon: 'water', color: '#42A5F5', type: 'EXPENSE' },
-  { name: 'categories.bills.gas', icon: 'fire', color: '#FF7043', type: 'EXPENSE' },
-  { name: 'categories.bills.internet', icon: 'wifi', color: '#7E57C2', type: 'EXPENSE' },
+  { nameTr: 'Kira', nameEn: 'Rent', icon: 'home', color: '#E57373', type: 'EXPENSE' },
+  { nameTr: 'Aidat', nameEn: 'Dues', icon: 'building', color: '#EF5350', type: 'EXPENSE' },
+  { nameTr: 'Elektrik', nameEn: 'Electricity', icon: 'flash', color: '#F48FB1', type: 'EXPENSE' },
+  { nameTr: 'Su', nameEn: 'Water', icon: 'water', color: '#42A5F5', type: 'EXPENSE' },
+  { nameTr: 'Doğalgaz', nameEn: 'Gas', icon: 'fire', color: '#FF7043', type: 'EXPENSE' },
+  { nameTr: 'İnternet', nameEn: 'Internet', icon: 'wifi', color: '#7E57C2', type: 'EXPENSE' },
 
   // Transport
-  { name: 'categories.transport.motorcycle_fuel', icon: 'motorbike', color: '#26A69A', type: 'EXPENSE' },
-  { name: 'categories.transport.car_fuel', icon: 'car', color: '#66BB6A', type: 'EXPENSE' },
+  { nameTr: 'Motor Yakıt', nameEn: 'Motorcycle Fuel', icon: 'motorbike', color: '#26A69A', type: 'EXPENSE' },
+  { nameTr: 'Araba Yakıt', nameEn: 'Car Fuel', icon: 'car', color: '#66BB6A', type: 'EXPENSE' },
 
   // Subscriptions
-  { name: 'categories.subscriptions.netflix', icon: 'television', color: '#E50914', type: 'EXPENSE' },
-  { name: 'categories.subscriptions.prime', icon: 'package-variant', color: '#00A8E1', type: 'EXPENSE' },
-  { name: 'categories.subscriptions.hbo', icon: 'filmstrip', color: '#8E24AA', type: 'EXPENSE' },
-  { name: 'categories.subscriptions.gym', icon: 'dumbbell', color: '#FF5722', type: 'EXPENSE' },
+  { nameTr: 'Netflix', nameEn: 'Netflix', icon: 'television', color: '#E50914', type: 'EXPENSE' },
+  { nameTr: 'Prime Video', nameEn: 'Prime Video', icon: 'package-variant', color: '#00A8E1', type: 'EXPENSE' },
+  { nameTr: 'HBO Max', nameEn: 'HBO Max', icon: 'filmstrip', color: '#8E24AA', type: 'EXPENSE' },
+  { nameTr: 'Spor Salonu', nameEn: 'Gym', icon: 'dumbbell', color: '#FF5722', type: 'EXPENSE' },
 
   // Other
-  { name: 'categories.groceries', icon: 'cart', color: '#8BC34A', type: 'EXPENSE' },
-  { name: 'categories.health', icon: 'hospital', color: '#F44336', type: 'EXPENSE' },
-  { name: 'categories.entertainment', icon: 'party-popper', color: '#9C27B0', type: 'EXPENSE' },
-  { name: 'categories.loan_payment', icon: 'bank-transfer', color: '#5C6BC0', type: 'EXPENSE' },
-  { name: 'categories.other_expense', icon: 'dots-horizontal', color: '#9E9E9E', type: 'EXPENSE' },
+  { nameTr: 'Market', nameEn: 'Groceries', icon: 'cart', color: '#8BC34A', type: 'EXPENSE' },
+  { nameTr: 'Sağlık', nameEn: 'Health', icon: 'hospital', color: '#F44336', type: 'EXPENSE' },
+  { nameTr: 'Eğlence', nameEn: 'Entertainment', icon: 'party-popper', color: '#9C27B0', type: 'EXPENSE' },
+  { nameTr: 'Kredi Taksiti', nameEn: 'Loan Payment', icon: 'bank-transfer', color: '#5C6BC0', type: 'EXPENSE' },
+  { nameTr: 'Diğer Gider', nameEn: 'Other Expense', icon: 'dots-horizontal', color: '#9E9E9E', type: 'EXPENSE' },
 ];
 
 export const DEFAULT_INCOME_CATEGORIES: DefaultCategory[] = [
-  { name: 'categories.salary', icon: 'cash', color: '#4CAF50', type: 'INCOME' },
-  { name: 'categories.side_income', icon: 'wallet-plus', color: '#8BC34A', type: 'INCOME' },
-  { name: 'categories.other_income', icon: 'dots-horizontal', color: '#9E9E9E', type: 'INCOME' },
+  { nameTr: 'Maaş', nameEn: 'Salary', icon: 'cash', color: '#4CAF50', type: 'INCOME' },
+  { nameTr: 'Ek Gelir', nameEn: 'Side Income', icon: 'wallet-plus', color: '#8BC34A', type: 'INCOME' },
+  { nameTr: 'Diğer Gelir', nameEn: 'Other Income', icon: 'dots-horizontal', color: '#9E9E9E', type: 'INCOME' },
 ];
 
 export const ALL_DEFAULT_CATEGORIES = [

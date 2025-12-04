@@ -213,6 +213,8 @@ export class HomeService {
           $project: {
             categoryId: '$_id',
             categoryName: '$category.name',
+            categoryNameTr: '$category.nameTr',
+            categoryNameEn: '$category.nameEn',
             categoryIcon: '$category.icon',
             categoryColor: '$category.color',
             total: 1,

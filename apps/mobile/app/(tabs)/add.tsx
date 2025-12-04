@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
-import { ScrollView } from 'react-native';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { ScrollView as RNScrollView, Animated, Dimensions, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import {
   Box,
   VStack,
@@ -19,21 +19,41 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
+  ModalFooter,
   Heading,
+  Divider,
+  ScrollView,
 } from '@gluestack-ui/themed';
 import { useTranslation } from 'react-i18next';
 import { router, useFocusEffect } from 'expo-router';
-import { Users, Repeat, CreditCard, ChevronDown } from 'lucide-react-native';
+import { Users, Repeat, CreditCard, ChevronDown, ChevronUp, Plus, Check } from 'lucide-react-native';
 import { useTransactionsStore, useCategoriesStore, useCreditCardsStore } from '../../src/store';
 import type { CreditCard as CreditCardType } from '../../src/client';
 import { colors } from '../../src/constants/theme';
+import { getCategoryName } from '../../src/utils';
+
+type CategoryType = 'INCOME' | 'EXPENSE' | 'BOTH';
+
+const PRESET_COLORS = [
+  '#E57373', '#F06292', '#BA68C8', '#9575CD',
+  '#7986CB', '#64B5F6', '#4FC3F7', '#4DD0E1',
+  '#4DB6AC', '#81C784', '#AED581', '#DCE775',
+  '#FFF176', '#FFD54F', '#FFB74D', '#FF8A65',
+];
+
+const PRESET_ICONS = [
+  '🏠', '🚗', '🍔', '🛒', '💊', '🎬', '🎮', '📱',
+  '💡', '💧', '🔥', '🌐', '🏋️', '📺', '🎵', '📚',
+  '✈️', '🎁', '👕', '💰', '💳', '🏦', '📊', '🎯',
+];
 
 type TransactionType = 'INCOME' | 'EXPENSE';
 
 export default function AddTransactionScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLang = (i18n.language?.substring(0, 2) || 'tr') as 'tr' | 'en';
   const { createTransaction, isCreating, error } = useTransactionsStore();
-  const { categories, fetchCategories } = useCategoriesStore();
+  const { categories, fetchCategories, createCategory, isCreating: isCreatingCategory } = useCategoriesStore();
   const { creditCards, fetchCreditCards } = useCreditCardsStore();
 
   const [type, setType] = useState<TransactionType>('EXPENSE');
@@ -43,8 +63,17 @@ export default function AddTransactionScreen() {
   const [selectedCard, setSelectedCard] = useState<CreditCardType | null>(null);
   const [isShared, setIsShared] = useState(false);
   const [isRecurring, setIsRecurring] = useState(false);
-  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [showCardModal, setShowCardModal] = useState(false);
+
+  // Add category modal state
+  const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [newCategoryType, setNewCategoryType] = useState<CategoryType>('EXPENSE');
+  const [newCategoryColor, setNewCategoryColor] = useState(PRESET_COLORS[0]);
+  const [newCategoryIcon, setNewCategoryIcon] = useState(PRESET_ICONS[0]);
+
+  const dropdownAnimation = useRef(new Animated.Value(0)).current;
 
   // Reset form when screen comes into focus
   const resetForm = useCallback(() => {
@@ -73,6 +102,25 @@ export default function AddTransactionScreen() {
     (cat) => cat.type === type || cat.type === 'BOTH'
   );
 
+  const toggleCategoryDropdown = () => {
+    const toValue = showCategoryDropdown ? 0 : 1;
+    setShowCategoryDropdown(!showCategoryDropdown);
+    Animated.timing(dropdownAnimation, {
+      toValue,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const closeCategoryDropdown = () => {
+    setShowCategoryDropdown(false);
+    Animated.timing(dropdownAnimation, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  };
+
   const handleSubmit = async () => {
     if (!title || !amount || !selectedCategory) return;
 
@@ -93,8 +141,44 @@ export default function AddTransactionScreen() {
     }
   };
 
+  const handleOpenAddCategory = () => {
+    setNewCategoryName('');
+    setNewCategoryType(type); // Default to current transaction type
+    setNewCategoryColor(PRESET_COLORS[0]);
+    setNewCategoryIcon(PRESET_ICONS[0]);
+    closeCategoryDropdown();
+    setShowAddCategoryModal(true);
+  };
+
+  const handleSaveNewCategory = async () => {
+    if (!newCategoryName.trim()) return;
+
+    try {
+      await createCategory({
+        name: newCategoryName.trim(),
+        lang: currentLang,
+        icon: newCategoryIcon,
+        color: newCategoryColor,
+        type: newCategoryType,
+      });
+      setShowAddCategoryModal(false);
+    } catch {
+      // Error handled in store
+    }
+  };
+
+  const handleSelectCategory = (cat: typeof categories[0]) => {
+    setSelectedCategory(cat);
+    closeCategoryDropdown();
+  };
+
+  const dropdownMaxHeight = dropdownAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 250],
+  });
+
   return (
-    <ScrollView
+    <RNScrollView
       style={{ flex: 1 }}
       contentContainerStyle={{ flexGrow: 1 }}
     >
@@ -148,27 +232,130 @@ export default function AddTransactionScreen() {
           </Input>
 
           {/* Category Selector */}
-          <Pressable onPress={() => setShowCategoryModal(true)}>
-            <Box
-              borderWidth={1}
-              borderColor="$borderLight300"
-              sx={{ _dark: { borderColor: '$borderDark700' } }}
-              borderRadius="$lg"
-              p="$4"
-            >
-              <HStack justifyContent="space-between" alignItems="center">
-                <HStack space="md" alignItems="center">
-                  {selectedCategory && (
-                    <Text size="xl">{selectedCategory.icon}</Text>
+          <Box>
+            <Pressable onPress={toggleCategoryDropdown}>
+              <Box
+                borderWidth={1}
+                borderColor={showCategoryDropdown ? '$primary500' : '$borderLight300'}
+                sx={{ _dark: { borderColor: showCategoryDropdown ? '$primary500' : '$borderDark700' } }}
+                borderRadius="$lg"
+                borderBottomLeftRadius={showCategoryDropdown ? 0 : '$lg'}
+                borderBottomRightRadius={showCategoryDropdown ? 0 : '$lg'}
+                p="$4"
+                bg="$backgroundLight0"
+              >
+                <HStack justifyContent="space-between" alignItems="center">
+                  <HStack space="md" alignItems="center">
+                    {selectedCategory && (
+                      <Box
+                        w="$8"
+                        h="$8"
+                        borderRadius="$full"
+                        justifyContent="center"
+                        alignItems="center"
+                        bg={`${selectedCategory.color}20`}
+                      >
+                        <Text size="lg">{selectedCategory.icon}</Text>
+                      </Box>
+                    )}
+                    <Text color={selectedCategory ? '$textLight900' : '$textLight500'} sx={{ _dark: { color: selectedCategory ? '$textDark100' : '$textDark500' } }}>
+                      {selectedCategory ? getCategoryName(selectedCategory, currentLang) : t('transactions.category')}
+                    </Text>
+                  </HStack>
+                  {showCategoryDropdown ? (
+                    <ChevronUp size={20} color={colors.primary} />
+                  ) : (
+                    <ChevronDown size={20} color="#A3A3A3" />
                   )}
-                  <Text color={selectedCategory ? '$textLight900' : '$textLight500'}>
-                    {selectedCategory ? t(selectedCategory.name || '') : t('transactions.category')}
-                  </Text>
                 </HStack>
-                <ChevronDown size={20} color="#A3A3A3" />
-              </HStack>
-            </Box>
-          </Pressable>
+              </Box>
+            </Pressable>
+
+            {/* Dropdown Content */}
+            <Animated.View
+              style={{
+                maxHeight: dropdownMaxHeight,
+                overflow: 'hidden',
+                borderWidth: showCategoryDropdown ? 1 : 0,
+                borderTopWidth: 0,
+                borderColor: colors.primary,
+                borderBottomLeftRadius: 8,
+                borderBottomRightRadius: 8,
+              }}
+            >
+              <Box
+                bg="$backgroundLight0"
+                sx={{ _dark: { bg: '$backgroundDark900' } }}
+              >
+                {/* Add New Category - Fixed at top */}
+                <Pressable
+                  onPress={handleOpenAddCategory}
+                  py="$3"
+                  px="$4"
+                  bg="$backgroundLight50"
+                  sx={{ _dark: { bg: '$backgroundDark800' } }}
+                >
+                  <HStack space="md" alignItems="center">
+                    <Box
+                      w="$8"
+                      h="$8"
+                      borderRadius="$full"
+                      justifyContent="center"
+                      alignItems="center"
+                      bg={`${colors.primary}20`}
+                    >
+                      <Plus size={18} color={colors.primary} />
+                    </Box>
+                    <Text size="md" color="$primary500" fontWeight="$medium">
+                      {t('categories.addCategory')}
+                    </Text>
+                  </HStack>
+                </Pressable>
+                <Divider />
+
+                {/* Category List */}
+                <RNScrollView style={{ maxHeight: 200 }} nestedScrollEnabled>
+                  {filteredCategories.length === 0 ? (
+                    <Box py="$4" px="$4">
+                      <Text color="$textLight500" textAlign="center">
+                        {t('categories.noCategories')}
+                      </Text>
+                    </Box>
+                  ) : (
+                    filteredCategories.map((cat, index) => (
+                      <Pressable
+                        key={cat.id}
+                        onPress={() => handleSelectCategory(cat)}
+                        py="$3"
+                        px="$4"
+                        bg={selectedCategory?.id === cat.id ? '$backgroundLight100' : '$backgroundLight0'}
+                        sx={{ _dark: { bg: selectedCategory?.id === cat.id ? '$backgroundDark800' : '$backgroundDark900' } }}
+                      >
+                        <HStack space="md" alignItems="center">
+                          <Box
+                            w="$8"
+                            h="$8"
+                            borderRadius="$full"
+                            justifyContent="center"
+                            alignItems="center"
+                            bg={`${cat.color}20`}
+                          >
+                            <Text size="lg">{cat.icon}</Text>
+                          </Box>
+                          <Text size="md">{getCategoryName(cat, currentLang)}</Text>
+                          {selectedCategory?.id === cat.id && (
+                            <Box ml="auto">
+                              <Check size={18} color={colors.primary} />
+                            </Box>
+                          )}
+                        </HStack>
+                      </Pressable>
+                    ))
+                  )}
+                </RNScrollView>
+              </Box>
+            </Animated.View>
+          </Box>
 
           {/* Credit Card Selector (Expense only) */}
           {type === 'EXPENSE' && (
@@ -232,32 +419,157 @@ export default function AddTransactionScreen() {
           </Button>
         </VStack>
 
-        {/* Category Modal */}
-        <Modal isOpen={showCategoryModal} onClose={() => setShowCategoryModal(false)}>
+        {/* Add Category Modal */}
+        <Modal isOpen={showAddCategoryModal} onClose={() => setShowAddCategoryModal(false)} size="lg">
           <ModalBackdrop />
           <ModalContent>
             <ModalHeader>
-              <Heading size="lg">{t('transactions.category')}</Heading>
+              <Heading size="lg">{t('categories.addCategory')}</Heading>
             </ModalHeader>
             <ModalBody>
-              <VStack space="sm">
-                {filteredCategories.map((cat) => (
-                  <Pressable
-                    key={cat.id}
-                    onPress={() => {
-                      setSelectedCategory(cat);
-                      setShowCategoryModal(false);
-                    }}
-                    py="$3"
-                  >
-                    <HStack space="md" alignItems="center">
-                      <Text size="xl">{cat.icon}</Text>
-                      <Text size="md">{t(cat.name || '')}</Text>
+              <ScrollView style={{ maxHeight: 400 }}>
+                <VStack space="md">
+                  {/* Category Type */}
+                  <VStack space="xs">
+                    <Text size="sm" color="$textLight500">{t('categories.type')}</Text>
+                    <ButtonGroup space="sm">
+                      <Button
+                        flex={1}
+                        size="sm"
+                        variant={newCategoryType === 'EXPENSE' ? 'solid' : 'outline'}
+                        action={newCategoryType === 'EXPENSE' ? 'negative' : 'secondary'}
+                        onPress={() => setNewCategoryType('EXPENSE')}
+                      >
+                        <ButtonText>{t('transactions.expense')}</ButtonText>
+                      </Button>
+                      <Button
+                        flex={1}
+                        size="sm"
+                        variant={newCategoryType === 'INCOME' ? 'solid' : 'outline'}
+                        action={newCategoryType === 'INCOME' ? 'positive' : 'secondary'}
+                        onPress={() => setNewCategoryType('INCOME')}
+                      >
+                        <ButtonText>{t('transactions.income')}</ButtonText>
+                      </Button>
+                      <Button
+                        flex={1}
+                        size="sm"
+                        variant={newCategoryType === 'BOTH' ? 'solid' : 'outline'}
+                        onPress={() => setNewCategoryType('BOTH')}
+                      >
+                        <ButtonText>{t('categories.both')}</ButtonText>
+                      </Button>
+                    </ButtonGroup>
+                  </VStack>
+
+                  {/* Category Name */}
+                  <VStack space="xs">
+                    <Text size="sm" color="$textLight500">{t('categories.name')}</Text>
+                    <Input size="lg" variant="outline">
+                      <InputField
+                        placeholder={t('categories.namePlaceholder')}
+                        value={newCategoryName}
+                        onChangeText={setNewCategoryName}
+                      />
+                    </Input>
+                  </VStack>
+
+                  {/* Icon Selection */}
+                  <VStack space="xs">
+                    <Text size="sm" color="$textLight500">{t('categories.icon')}</Text>
+                    <HStack flexWrap="wrap">
+                      {PRESET_ICONS.map((icon) => (
+                        <Pressable
+                          key={icon}
+                          onPress={() => setNewCategoryIcon(icon)}
+                          p="$2"
+                          m="$0.5"
+                          borderRadius="$lg"
+                          borderWidth={newCategoryIcon === icon ? 2 : 1}
+                          borderColor={newCategoryIcon === icon ? '$primary500' : '$borderLight300'}
+                          sx={{ _dark: { borderColor: newCategoryIcon === icon ? '$primary500' : '$borderDark700' } }}
+                        >
+                          <Text size="xl">{icon}</Text>
+                        </Pressable>
+                      ))}
                     </HStack>
-                  </Pressable>
-                ))}
-              </VStack>
+                  </VStack>
+
+                  {/* Color Selection */}
+                  <VStack space="xs">
+                    <Text size="sm" color="$textLight500">{t('categories.color')}</Text>
+                    <HStack flexWrap="wrap">
+                      {PRESET_COLORS.map((color) => (
+                        <Pressable
+                          key={color}
+                          onPress={() => setNewCategoryColor(color)}
+                          w="$8"
+                          h="$8"
+                          m="$0.5"
+                          borderRadius="$full"
+                          bg={color}
+                          justifyContent="center"
+                          alignItems="center"
+                          borderWidth={newCategoryColor === color ? 3 : 0}
+                          borderColor="$white"
+                        >
+                          {newCategoryColor === color && (
+                            <Check size={16} color="#ffffff" />
+                          )}
+                        </Pressable>
+                      ))}
+                    </HStack>
+                  </VStack>
+
+                  {/* Preview */}
+                  <VStack space="xs">
+                    <Text size="sm" color="$textLight500">{t('categories.preview')}</Text>
+                    <Box
+                      bg="$backgroundLight100"
+                      sx={{ _dark: { bg: '$backgroundDark800' } }}
+                      p="$3"
+                      borderRadius="$lg"
+                    >
+                      <HStack space="md" alignItems="center">
+                        <Box
+                          w="$10"
+                          h="$10"
+                          borderRadius="$full"
+                          justifyContent="center"
+                          alignItems="center"
+                          bg={`${newCategoryColor}20`}
+                        >
+                          <Text size="xl">{newCategoryIcon}</Text>
+                        </Box>
+                        <Text size="md" fontWeight="$medium">
+                          {newCategoryName || t('categories.namePlaceholder')}
+                        </Text>
+                      </HStack>
+                    </Box>
+                  </VStack>
+                </VStack>
+              </ScrollView>
             </ModalBody>
+            <ModalFooter>
+              <ButtonGroup space="md" flex={1}>
+                <Button
+                  flex={1}
+                  variant="outline"
+                  action="secondary"
+                  onPress={() => setShowAddCategoryModal(false)}
+                >
+                  <ButtonText>{t('common.cancel')}</ButtonText>
+                </Button>
+                <Button
+                  flex={1}
+                  onPress={handleSaveNewCategory}
+                  isDisabled={isCreatingCategory || !newCategoryName.trim()}
+                >
+                  {isCreatingCategory && <ButtonSpinner mr="$2" />}
+                  <ButtonText>{t('common.save')}</ButtonText>
+                </Button>
+              </ButtonGroup>
+            </ModalFooter>
           </ModalContent>
         </Modal>
 
@@ -299,6 +611,6 @@ export default function AddTransactionScreen() {
           </ModalContent>
         </Modal>
       </Box>
-    </ScrollView>
+    </RNScrollView>
   );
 }

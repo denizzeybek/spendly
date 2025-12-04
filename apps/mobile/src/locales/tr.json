@@ -59,6 +59,22 @@
   },
   "categories": {
     "title": "Kategoriler",
+    "addCategory": "Kategori Ekle",
+    "editCategory": "Kategoriyi Düzenle",
+    "deleteTitle": "Kategoriyi Sil",
+    "deleteConfirm": "Bu kategoriyi silmek istediğinizden emin misiniz?",
+    "cannotDelete": "Silinemez",
+    "defaultCategoryWarning": "Varsayılan kategoriler silinemez.",
+    "name": "Kategori Adı",
+    "namePlaceholder": "Örn: Eğitim",
+    "icon": "Simge",
+    "color": "Renk",
+    "type": "Kategori Tipi",
+    "both": "Her İkisi",
+    "typeBoth": "Gelir & Gider",
+    "default": "Varsayılan",
+    "preview": "Önizleme",
+    "noCategories": "Henüz kategori yok",
     "bills": {
       "rent": "Kira",
       "dues": "Aidat",
@@ -105,7 +121,8 @@
     "shareCode": "Kodu Paylaş",
     "members": "Üyeler",
     "creditCards": "Kredi Kartlarım",
-    "loans": "Kredilerim"
+    "loans": "Kredilerim",
+    "categories": "Kategoriler"
   },
   "creditCards": {
     "title": "Kredi Kartlarım",

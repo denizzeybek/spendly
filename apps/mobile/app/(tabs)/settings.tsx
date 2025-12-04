@@ -27,6 +27,7 @@ import {
   ChevronRight,
   CreditCard,
   Landmark,
+  Tag,
 } from 'lucide-react-native';
 import { useAuthStore, useThemeStore } from '../../src/store';
 import i18n from '../../src/locales/i18n';
@@ -218,6 +219,19 @@ export default function SettingsScreen() {
               <HStack space="md" alignItems="center">
                 <Landmark size={22} color={colors.primary} />
                 <Text size="md">{t('settings.loans')}</Text>
+              </HStack>
+              <ChevronRight size={20} color="#A3A3A3" />
+            </HStack>
+          </Pressable>
+
+          <Divider />
+
+          {/* Categories */}
+          <Pressable p="$4" onPress={() => router.push('/categories')}>
+            <HStack justifyContent="space-between" alignItems="center">
+              <HStack space="md" alignItems="center">
+                <Tag size={22} color={colors.primary} />
+                <Text size="md">{t('settings.categories')}</Text>
               </HStack>
               <ChevronRight size={20} color="#A3A3A3" />
             </HStack>

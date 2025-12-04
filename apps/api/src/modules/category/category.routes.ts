@@ -50,6 +50,10 @@ router.get('/', validate(listCategoriesQuerySchema, 'query'), categoryController
  *             properties:
  *               name:
  *                 type: string
+ *               lang:
+ *                 type: string
+ *                 enum: [tr, en]
+ *                 default: tr
  *               icon:
  *                 type: string
  *               color:
@@ -77,6 +81,25 @@ router.post('/', validate(createCategorySchema), categoryController.create);
  *         required: true
  *         schema:
  *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               lang:
+ *                 type: string
+ *                 enum: [tr, en]
+ *               icon:
+ *                 type: string
+ *               color:
+ *                 type: string
+ *               type:
+ *                 type: string
+ *                 enum: [INCOME, EXPENSE, BOTH]
  *     responses:
  *       200:
  *         description: Category updated

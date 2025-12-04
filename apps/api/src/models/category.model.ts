@@ -3,7 +3,9 @@ import { CategoryType } from '../types';
 
 export interface ICategoryDocument extends Document {
   _id: mongoose.Types.ObjectId;
-  name: string;
+  name: string; // Keep for backward compatibility, will be deprecated
+  nameTr: string;
+  nameEn: string;
   icon: string;
   color: string;
   type: CategoryType;
@@ -15,6 +17,16 @@ export interface ICategoryDocument extends Document {
 const categorySchema = new Schema<ICategoryDocument>(
   {
     name: {
+      type: String,
+      required: false, // Deprecated, keeping for backward compatibility
+      trim: true,
+    },
+    nameTr: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    nameEn: {
       type: String,
       required: true,
       trim: true,

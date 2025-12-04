@@ -77,7 +77,9 @@ const options: swaggerJsdoc.Options = {
           type: 'object',
           properties: {
             id: { type: 'string' },
-            name: { type: 'string' },
+            name: { type: 'string', description: 'Deprecated - use nameTr/nameEn instead' },
+            nameTr: { type: 'string', description: 'Turkish name' },
+            nameEn: { type: 'string', description: 'English name' },
             icon: { type: 'string' },
             color: { type: 'string' },
             type: { type: 'string', enum: ['INCOME', 'EXPENSE', 'BOTH'] },
@@ -176,7 +178,9 @@ const options: swaggerJsdoc.Options = {
                 type: 'object',
                 properties: {
                   categoryId: { type: 'string' },
-                  categoryName: { type: 'string' },
+                  categoryName: { type: 'string', description: 'Deprecated - use categoryNameTr/categoryNameEn' },
+                  categoryNameTr: { type: 'string', description: 'Turkish category name' },
+                  categoryNameEn: { type: 'string', description: 'English category name' },
                   categoryIcon: { type: 'string' },
                   categoryColor: { type: 'string' },
                   total: { type: 'number' },

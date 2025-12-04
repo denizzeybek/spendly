@@ -13,12 +13,13 @@ import {
 } from '@gluestack-ui/themed';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore, useHomeStore } from '../../src/store';
-import { formatCurrency } from '../../src/utils';
+import { formatCurrency, getCategoryName } from '../../src/utils';
 
 type ReportView = 'overview' | 'users';
 
 export default function ReportsScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLang = (i18n.language?.substring(0, 2) || 'tr') as 'tr' | 'en';
   const { home } = useAuthStore();
   const { summary, userSummaries, isLoading, fetchSummary, fetchUserSummaries } = useHomeStore();
   const [view, setView] = useState<ReportView>('overview');
@@ -123,7 +124,7 @@ export default function ReportsScreen() {
                         <HStack justifyContent="space-between" alignItems="center">
                           <HStack space="sm" alignItems="center">
                             <Box w="$3" h="$3" borderRadius="$full" bg={cat.categoryColor} />
-                            <Text size="sm">{t(cat.categoryName || '')}</Text>
+                            <Text size="sm">{getCategoryName({ nameTr: cat.categoryNameTr, nameEn: cat.categoryNameEn, name: cat.categoryName }, currentLang)}</Text>
                           </HStack>
                           <Text size="sm" fontWeight="$medium">
                             {formatCurrency(cat.total || 0, currency)} ({cat.percentage}%)

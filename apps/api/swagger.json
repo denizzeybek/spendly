@@ -158,7 +158,16 @@
             "type": "string"
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Deprecated - use nameTr/nameEn instead"
+          },
+          "nameTr": {
+            "type": "string",
+            "description": "Turkish name"
+          },
+          "nameEn": {
+            "type": "string",
+            "description": "English name"
           },
           "icon": {
             "type": "string"
@@ -406,7 +415,16 @@
                   "type": "string"
                 },
                 "categoryName": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "Deprecated - use categoryNameTr/categoryNameEn"
+                },
+                "categoryNameTr": {
+                  "type": "string",
+                  "description": "Turkish category name"
+                },
+                "categoryNameEn": {
+                  "type": "string",
+                  "description": "English category name"
                 },
                 "categoryIcon": {
                   "type": "string"
@@ -642,6 +660,14 @@
                   "name": {
                     "type": "string"
                   },
+                  "lang": {
+                    "type": "string",
+                    "enum": [
+                      "tr",
+                      "en"
+                    ],
+                    "default": "tr"
+                  },
                   "icon": {
                     "type": "string"
                   },
@@ -689,6 +715,42 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "lang": {
+                    "type": "string",
+                    "enum": [
+                      "tr",
+                      "en"
+                    ]
+                  },
+                  "icon": {
+                    "type": "string"
+                  },
+                  "color": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "INCOME",
+                      "EXPENSE",
+                      "BOTH"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Category updated"
