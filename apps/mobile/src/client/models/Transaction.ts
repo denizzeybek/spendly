@@ -8,12 +8,20 @@ export type Transaction = {
     title?: string;
     amount?: number;
     date?: string;
-    categoryId?: string;
+    categoryId?: {
+        _id?: string;
+        name?: string;
+        icon?: string;
+        color?: string;
+    };
     assignedCardId?: string | null;
     isShared?: boolean;
     isRecurring?: boolean;
     recurringDay?: number | null;
-    createdById?: string;
+    createdById?: {
+        _id?: string;
+        name?: string;
+    };
     homeId?: string;
     createdAt?: string;
     updatedAt?: string;

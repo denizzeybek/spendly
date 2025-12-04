@@ -68,6 +68,10 @@ interface TransactionItem {
     icon: string;
     color: string;
   };
+  createdById?: {
+    _id: string;
+    name: string;
+  };
 }
 
 export default function TransactionsScreen() {
@@ -276,12 +280,9 @@ export default function TransactionsScreen() {
               <Text size="xl">{item.categoryId?.icon || '💰'}</Text>
             </Box>
             <VStack flex={1}>
-              <Text size="md" fontWeight="$medium" numberOfLines={1}>
-                {item.title}
-              </Text>
               <HStack space="xs" alignItems="center">
-                <Text size="xs" color="$textLight500" sx={{ _dark: { color: '$textDark400' } }}>
-                  {formatDate(item.date || '')}
+                <Text size="md" fontWeight="$medium" numberOfLines={1} flex={1}>
+                  {item.title}
                 </Text>
                 {item.isShared && (
                   <Badge size="sm" variant="outline" action="warning">
@@ -289,6 +290,9 @@ export default function TransactionsScreen() {
                   </Badge>
                 )}
               </HStack>
+              <Text size="xs" color="$textLight500" sx={{ _dark: { color: '$textDark400' } }}>
+                {formatDate(item.date || '')} • {item.createdById?.name || ''}
+              </Text>
             </VStack>
           </HStack>
           <HStack space="md" alignItems="center">

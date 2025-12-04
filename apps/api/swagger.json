@@ -119,7 +119,21 @@
             "format": "date-time"
           },
           "categoryId": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "icon": {
+                "type": "string"
+              },
+              "color": {
+                "type": "string"
+              }
+            }
           },
           "assignedCardId": {
             "type": "string",
@@ -136,7 +150,15 @@
             "nullable": true
           },
           "createdById": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
           },
           "homeId": {
             "type": "string"
@@ -158,16 +180,7 @@
             "type": "string"
           },
           "name": {
-            "type": "string",
-            "description": "Deprecated - use nameTr/nameEn instead"
-          },
-          "nameTr": {
-            "type": "string",
-            "description": "Turkish name"
-          },
-          "nameEn": {
-            "type": "string",
-            "description": "English name"
+            "type": "string"
           },
           "icon": {
             "type": "string"
@@ -415,16 +428,7 @@
                   "type": "string"
                 },
                 "categoryName": {
-                  "type": "string",
-                  "description": "Deprecated - use categoryNameTr/categoryNameEn"
-                },
-                "categoryNameTr": {
-                  "type": "string",
-                  "description": "Turkish category name"
-                },
-                "categoryNameEn": {
-                  "type": "string",
-                  "description": "English category name"
+                  "type": "string"
                 },
                 "categoryIcon": {
                   "type": "string"

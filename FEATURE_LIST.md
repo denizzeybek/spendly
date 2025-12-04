@@ -49,4 +49,5 @@
 - [ ] Bu uygulamaya bir de todo listesi ekle. Checklist şeklinde olsun. Aynı ev içinde 2 kişi var diyelim mesela. Ben yeni bir item eklediğimde (sadece ekleme yapıldığında) karşı tarafa notification gitsin. {userName} {itemName}'i {listName} e ekledi. şeklinde. Yani liste birden fazla olabilir liste eklerken önce liste adı eklemeli sonra içinde her alt satıra geçtiğinde checklist item olmalı. 
 - [ ] Maaşa brüt net hesaplama özelliği eklememiz lazım
     - onun için bir api service bulmamız lazım context 7 ile, bulamazsak custom backend'e kendimiz eklemeliyiz
+- [ ] Aslında delete ve edit işlemleri icon olarak değil de sağa sola sürüklediğimizde gözükmeli. Sola sürüklersek delete çıkmalı, sağa sürüklersek edit çıkmalı.
 
