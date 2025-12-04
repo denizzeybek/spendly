@@ -22,7 +22,7 @@ export default function ReportsScreen() {
   const { t } = useTranslation();
   const { home } = useAuthStore();
   const { summary, userSummaries, isLoading, fetchSummary, fetchUserSummaries } = useHomeStore();
-  const [view, setView] = useState<ReportView>('overview');
+  const [view, setView] = useState<ReportView>('users');
 
   const currency = home?.currency || 'TRY';
 
@@ -62,17 +62,17 @@ export default function ReportsScreen() {
           <ButtonGroup space="sm">
             <Button
               flex={1}
-              variant={view === 'overview' ? 'solid' : 'outline'}
-              onPress={() => setView('overview')}
-            >
-              <ButtonText>{t('reports.byCategory')}</ButtonText>
-            </Button>
-            <Button
-              flex={1}
               variant={view === 'users' ? 'solid' : 'outline'}
               onPress={() => setView('users')}
             >
               <ButtonText>{t('reports.byUser')}</ButtonText>
+            </Button>
+            <Button
+              flex={1}
+              variant={view === 'overview' ? 'solid' : 'outline'}
+              onPress={() => setView('overview')}
+            >
+              <ButtonText>{t('reports.byCategory')}</ButtonText>
             </Button>
           </ButtonGroup>
 

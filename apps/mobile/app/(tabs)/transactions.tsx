@@ -279,17 +279,15 @@ export default function TransactionsScreen() {
             >
               <Text size="xl">{item.categoryId?.icon || '💰'}</Text>
             </Box>
-            <VStack flex={1}>
-              <HStack space="xs" alignItems="center">
+            <VStack flex={1} space="xs">
                 <Text size="md" fontWeight="$medium" numberOfLines={1} flex={1}>
                   {item.title}
                 </Text>
                 {item.isShared && (
-                  <Badge size="sm" variant="outline" action="warning">
+                  <Badge size="sm" variant="outline" action="warning" style={{ alignSelf: 'flex-start', flexShrink: 1 }}>
                     <BadgeText size="2xs">{t('transactions.shared')}</BadgeText>
                   </Badge>
                 )}
-              </HStack>
               <Text size="xs" color="$textLight500" sx={{ _dark: { color: '$textDark400' } }}>
                 {formatDate(item.date || '')} • {item.createdById?.name || ''}
               </Text>
