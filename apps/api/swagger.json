@@ -660,14 +660,6 @@
                   "name": {
                     "type": "string"
                   },
-                  "lang": {
-                    "type": "string",
-                    "enum": [
-                      "tr",
-                      "en"
-                    ],
-                    "default": "tr"
-                  },
                   "icon": {
                     "type": "string"
                   },
@@ -724,13 +716,6 @@
                 "properties": {
                   "name": {
                     "type": "string"
-                  },
-                  "lang": {
-                    "type": "string",
-                    "enum": [
-                      "tr",
-                      "en"
-                    ]
                   },
                   "icon": {
                     "type": "string"

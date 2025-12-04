@@ -33,7 +33,7 @@ import { useTranslation } from 'react-i18next';
 import { router, useFocusEffect } from 'expo-router';
 import { Search, Plus, Receipt, Trash2, ChevronDown, ChevronUp, Check } from 'lucide-react-native';
 import { useAuthStore, useTransactionsStore, useFilteredTransactions, useCategoriesStore } from '../../src/store';
-import { formatCurrency, getCategoryName } from '../../src/utils';
+import { formatCurrency } from '../../src/utils';
 import { colors } from '../../src/constants/theme';
 
 type CategoryType = 'INCOME' | 'EXPENSE' | 'BOTH';
@@ -71,8 +71,7 @@ interface TransactionItem {
 }
 
 export default function TransactionsScreen() {
-  const { t, i18n } = useTranslation();
-  const currentLang = (i18n.language?.substring(0, 2) || 'tr') as 'tr' | 'en';
+  const { t } = useTranslation();
   const { home } = useAuthStore();
   const {
     filter,
@@ -245,7 +244,6 @@ export default function TransactionsScreen() {
     try {
       await createCategory({
         name: newCategoryName.trim(),
-        lang: currentLang,
         icon: newCategoryIcon,
         color: newCategoryColor,
         type: newCategoryType,
@@ -465,7 +463,7 @@ export default function TransactionsScreen() {
                           </Box>
                         )}
                         <Text color={selectedCategory ? '$textLight900' : '$textLight500'} sx={{ _dark: { color: selectedCategory ? '$textDark100' : '$textDark500' } }}>
-                          {selectedCategory ? getCategoryName(selectedCategory, currentLang) : t('transactions.category')}
+                          {selectedCategory?.name || t('transactions.category')}
                         </Text>
                       </HStack>
                       {showCategoryDropdown ? (
@@ -548,7 +546,7 @@ export default function TransactionsScreen() {
                               >
                                 <Text size="lg">{cat.icon}</Text>
                               </Box>
-                              <Text size="md">{getCategoryName(cat, currentLang)}</Text>
+                              <Text size="md">{cat.name}</Text>
                               {selectedCategory?.id === cat.id && (
                                 <Box ml="auto">
                                   <Check size={18} color={colors.primary} />

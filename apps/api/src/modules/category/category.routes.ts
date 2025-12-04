@@ -50,10 +50,6 @@ router.get('/', validate(listCategoriesQuerySchema, 'query'), categoryController
  *             properties:
  *               name:
  *                 type: string
- *               lang:
- *                 type: string
- *                 enum: [tr, en]
- *                 default: tr
  *               icon:
  *                 type: string
  *               color:
@@ -90,9 +86,6 @@ router.post('/', validate(createCategorySchema), categoryController.create);
  *             properties:
  *               name:
  *                 type: string
- *               lang:
- *                 type: string
- *                 enum: [tr, en]
  *               icon:
  *                 type: string
  *               color:

@@ -5,7 +5,6 @@ import type { ApiError } from '../types';
 
 interface CreateCategoryInput {
   name: string;
-  lang: 'tr' | 'en';
   icon: string;
   color: string;
   type: 'INCOME' | 'EXPENSE' | 'BOTH';
@@ -13,7 +12,6 @@ interface CreateCategoryInput {
 
 interface UpdateCategoryInput {
   name?: string;
-  lang?: 'tr' | 'en';
   icon?: string;
   color?: string;
   type?: 'INCOME' | 'EXPENSE' | 'BOTH';

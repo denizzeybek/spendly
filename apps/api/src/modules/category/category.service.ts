@@ -1,7 +1,6 @@
 import { Category } from '../../models';
 import { AppError } from '../../middlewares/error.middleware';
 import { CreateCategoryInput, UpdateCategoryInput, ListCategoriesQuery } from './category.schema';
-import { translateCategoryName } from '../../services/translation.service';
 import mongoose from 'mongoose';
 
 export class CategoryService {
@@ -14,19 +13,16 @@ export class CategoryService {
       filter.$or = [{ type: query.type }, { type: 'BOTH' }];
     }
 
-    const categories = await Category.find(filter).sort({ isDefault: -1, nameTr: 1 });
+    const categories = await Category.find(filter).sort({ isDefault: -1, name: 1 });
     return categories.map((c) => c.toJSON());
   }
 
   async create(input: CreateCategoryInput, homeId: string) {
-    const { name, lang, icon, color, type } = input;
+    const { name, icon, color, type } = input;
 
-    // Translate the name to the other language
-    const { nameTr, nameEn } = await translateCategoryName(name, lang);
-
-    // Check for duplicate name in home (check both languages)
+    // Check for duplicate name in home
     const existing = await Category.findOne({
-      $or: [{ nameTr }, { nameEn }],
+      name,
       homeId: new mongoose.Types.ObjectId(homeId),
     });
     if (existing) {
@@ -34,8 +30,7 @@ export class CategoryService {
     }
 
     const category = await Category.create({
-      nameTr,
-      nameEn,
+      name,
       icon,
       color,
       type,
@@ -56,34 +51,21 @@ export class CategoryService {
       throw new AppError('Category not found', 404);
     }
 
-    const updateData: Record<string, unknown> = {};
-
-    // Handle name update with translation
-    if (input.name && input.lang) {
-      const { nameTr, nameEn } = await translateCategoryName(input.name, input.lang);
-
-      // Check for duplicate name (check both languages)
+    // Check for duplicate name if updating name
+    if (input.name) {
       const existing = await Category.findOne({
-        $or: [{ nameTr }, { nameEn }],
+        name: input.name,
         homeId: new mongoose.Types.ObjectId(homeId),
         _id: { $ne: id },
       });
       if (existing) {
         throw new AppError('Category with this name already exists', 409);
       }
-
-      updateData.nameTr = nameTr;
-      updateData.nameEn = nameEn;
     }
-
-    // Handle other fields
-    if (input.icon) updateData.icon = input.icon;
-    if (input.color) updateData.color = input.color;
-    if (input.type) updateData.type = input.type;
 
     const updated = await Category.findByIdAndUpdate(
       id,
-      { $set: updateData },
+      { $set: input },
       { new: true }
     );
 

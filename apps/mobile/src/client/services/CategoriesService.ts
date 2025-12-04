@@ -32,7 +32,6 @@ export class CategoriesService {
     public static postApiCategories(
         requestBody: {
             name: string;
-            lang?: 'tr' | 'en';
             icon: string;
             color: string;
             type: 'INCOME' | 'EXPENSE' | 'BOTH';
@@ -56,7 +55,6 @@ export class CategoriesService {
         id: string,
         requestBody: {
             name?: string;
-            lang?: 'tr' | 'en';
             icon?: string;
             color?: string;
             type?: 'INCOME' | 'EXPENSE' | 'BOTH';

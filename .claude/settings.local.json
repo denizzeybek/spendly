@@ -37,7 +37,8 @@
       "Bash(yarn gcl:*)",
       "Bash(npx tsc --noEmit)",
       "Bash(yarn gcl:*:*)",
-      "Bash(npx tsx:*)"
+      "Bash(npx tsx:*)",
+      "Bash(git push)"
     ],
     "deny": [],
     "ask": []

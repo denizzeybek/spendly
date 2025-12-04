@@ -30,7 +30,6 @@ import { Users, Repeat, CreditCard, ChevronDown, ChevronUp, Plus, Check } from '
 import { useTransactionsStore, useCategoriesStore, useCreditCardsStore } from '../../src/store';
 import type { CreditCard as CreditCardType } from '../../src/client';
 import { colors } from '../../src/constants/theme';
-import { getCategoryName } from '../../src/utils';
 
 type CategoryType = 'INCOME' | 'EXPENSE' | 'BOTH';
 
@@ -50,8 +49,7 @@ const PRESET_ICONS = [
 type TransactionType = 'INCOME' | 'EXPENSE';
 
 export default function AddTransactionScreen() {
-  const { t, i18n } = useTranslation();
-  const currentLang = (i18n.language?.substring(0, 2) || 'tr') as 'tr' | 'en';
+  const { t } = useTranslation();
   const { createTransaction, isCreating, error } = useTransactionsStore();
   const { categories, fetchCategories, createCategory, isCreating: isCreatingCategory } = useCategoriesStore();
   const { creditCards, fetchCreditCards } = useCreditCardsStore();
@@ -156,7 +154,6 @@ export default function AddTransactionScreen() {
     try {
       await createCategory({
         name: newCategoryName.trim(),
-        lang: currentLang,
         icon: newCategoryIcon,
         color: newCategoryColor,
         type: newCategoryType,
@@ -209,28 +206,6 @@ export default function AddTransactionScreen() {
             </Button>
           </ButtonGroup>
 
-          {/* Title Input */}
-          <Input size="xl" variant="outline">
-            <InputField
-              placeholder={t('transactions.description')}
-              value={title}
-              onChangeText={setTitle}
-            />
-          </Input>
-
-          {/* Amount Input */}
-          <Input size="xl" variant="outline">
-            <InputSlot pl="$3">
-              <Text size="lg" color="$textLight500">₺</Text>
-            </InputSlot>
-            <InputField
-              placeholder={t('transactions.amount')}
-              value={amount}
-              onChangeText={setAmount}
-              keyboardType="decimal-pad"
-            />
-          </Input>
-
           {/* Category Selector */}
           <Box>
             <Pressable onPress={toggleCategoryDropdown}>
@@ -259,7 +234,7 @@ export default function AddTransactionScreen() {
                       </Box>
                     )}
                     <Text color={selectedCategory ? '$textLight900' : '$textLight500'} sx={{ _dark: { color: selectedCategory ? '$textDark100' : '$textDark500' } }}>
-                      {selectedCategory ? getCategoryName(selectedCategory, currentLang) : t('transactions.category')}
+                      {selectedCategory?.name || t('transactions.category')}
                     </Text>
                   </HStack>
                   {showCategoryDropdown ? (
@@ -342,7 +317,7 @@ export default function AddTransactionScreen() {
                           >
                             <Text size="lg">{cat.icon}</Text>
                           </Box>
-                          <Text size="md">{getCategoryName(cat, currentLang)}</Text>
+                          <Text size="md">{cat.name}</Text>
                           {selectedCategory?.id === cat.id && (
                             <Box ml="auto">
                               <Check size={18} color={colors.primary} />
@@ -356,6 +331,28 @@ export default function AddTransactionScreen() {
               </Box>
             </Animated.View>
           </Box>
+
+          {/* Amount Input */}
+          <Input size="xl" variant="outline">
+            <InputSlot pl="$3">
+              <Text size="lg" color="$textLight500">₺</Text>
+            </InputSlot>
+            <InputField
+              placeholder={t('transactions.amount')}
+              value={amount}
+              onChangeText={setAmount}
+              keyboardType="decimal-pad"
+            />
+          </Input>
+
+          {/* Description Input */}
+          <Input size="xl" variant="outline">
+            <InputField
+              placeholder={t('transactions.description')}
+              value={title}
+              onChangeText={setTitle}
+            />
+          </Input>
 
           {/* Credit Card Selector (Expense only) */}
           {type === 'EXPENSE' && (

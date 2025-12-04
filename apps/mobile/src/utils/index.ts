@@ -60,18 +60,3 @@ export function addDays(date: Date | string | number, days: number): Date {
   return d;
 }
 
-/**
- * Get category name based on current language
- */
-export function getCategoryName(
-  category: { nameTr?: string; nameEn?: string; name?: string } | null | undefined,
-  lang: 'tr' | 'en' = 'tr'
-): string {
-  if (!category) return '';
-
-  if (lang === 'tr') {
-    return category.nameTr || category.nameEn || category.name || '';
-  } else {
-    return category.nameEn || category.nameTr || category.name || '';
-  }
-}

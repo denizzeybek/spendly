@@ -20,7 +20,6 @@ import { useFocusEffect, Stack } from 'expo-router';
 import { Plus, Tag, Trash2, Edit2, X, Check } from 'lucide-react-native';
 import { useCategoriesStore, useThemeStore } from '../src/store';
 import { colors } from '../src/constants/theme';
-import { getCategoryName } from '../src/utils';
 import type { Category } from '../src/client';
 
 type CategoryType = 'INCOME' | 'EXPENSE' | 'BOTH';
@@ -39,8 +38,7 @@ const PRESET_ICONS = [
 ];
 
 export default function CategoriesScreen() {
-  const { t, i18n } = useTranslation();
-  const currentLang = (i18n.language?.substring(0, 2) || 'tr') as 'tr' | 'en';
+  const { t } = useTranslation();
   const colorMode = useThemeStore((state) => state.colorMode);
   const {
     categories,
@@ -77,7 +75,7 @@ export default function CategoriesScreen() {
 
   const handleEditPress = (category: Category) => {
     setEditingCategory(category);
-    setCategoryName(getCategoryName(category, currentLang));
+    setCategoryName(category.name || '');
     setCategoryType(category.type || 'EXPENSE');
     setSelectedColor(category.color || PRESET_COLORS[0]);
     setSelectedIcon(category.icon || PRESET_ICONS[0]);
@@ -120,7 +118,6 @@ export default function CategoriesScreen() {
       if (editingCategory) {
         await updateCategory(editingCategory.id || '', {
           name: categoryName.trim(),
-          lang: currentLang,
           icon: selectedIcon,
           color: selectedColor,
           type: categoryType,
@@ -128,7 +125,6 @@ export default function CategoriesScreen() {
       } else {
         await createCategory({
           name: categoryName.trim(),
-          lang: currentLang,
           icon: selectedIcon,
           color: selectedColor,
           type: categoryType,
@@ -175,7 +171,7 @@ export default function CategoriesScreen() {
           </Box>
           <VStack flex={1}>
             <Text size="md" fontWeight="$medium" numberOfLines={1}>
-              {getCategoryName(item, currentLang)}
+              {item.name}
             </Text>
             <Text size="xs" color="$textLight500" sx={{ _dark: { color: '$textDark400' } }}>
               {item.type === 'BOTH'
