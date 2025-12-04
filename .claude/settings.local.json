@@ -35,7 +35,8 @@
       "Bash(git commit:*)",
       "Bash(cat:*)",
       "Bash(yarn gcl:*)",
-      "Bash(npx tsc --noEmit)"
+      "Bash(npx tsc --noEmit)",
+      "Bash(yarn gcl:*:*)"
     ],
     "deny": [],
     "ask": []

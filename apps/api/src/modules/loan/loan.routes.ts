@@ -76,6 +76,7 @@ router.get('/:id', loanController.getById);
  *               - monthlyPayment
  *               - totalInstallments
  *               - startDate
+ *               - endDate
  *             properties:
  *               name:
  *                 type: string
@@ -99,6 +100,10 @@ router.get('/:id', loanController.getById);
  *                 type: string
  *                 format: date-time
  *                 description: First payment date
+ *               endDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Last payment date
  *               interestRate:
  *                 type: number
  *                 description: Annual interest rate (optional)

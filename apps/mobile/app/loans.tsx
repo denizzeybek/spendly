@@ -21,7 +21,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect, Stack } from 'expo-router';
 import { Plus, Landmark, Trash2, Edit2, X, Calendar, CheckCircle, CircleDollarSign } from 'lucide-react-native';
-import { useLoansStore, useThemeStore, useHomeStore } from '../src/store';
+import { useLoansStore, useThemeStore, useAuthStore } from '../src/store';
 import { colors } from '../src/constants/theme';
 import { formatDate, formatCurrency, getFirstDayOfMonth } from '../src/utils';
 import type { Loan } from '../src/client';
@@ -29,7 +29,7 @@ import type { Loan } from '../src/client';
 export default function LoansScreen() {
   const { t } = useTranslation();
   const colorMode = useThemeStore((state) => state.colorMode);
-  const home = useHomeStore((state) => state.home);
+  const home = useAuthStore((state) => state.home);
   const currency = home?.currency || 'TRY';
   const {
     loans,
@@ -45,7 +45,8 @@ export default function LoansScreen() {
   } = useLoansStore();
 
   const [showModal, setShowModal] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showStartDatePicker, setShowStartDatePicker] = useState(false);
+  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
   const [editingLoan, setEditingLoan] = useState<Loan | null>(null);
 
   // Form state
@@ -53,11 +54,29 @@ export default function LoansScreen() {
   const [principalAmount, setPrincipalAmount] = useState('');
   const [totalAmount, setTotalAmount] = useState('');
   const [monthlyPayment, setMonthlyPayment] = useState('');
-  const [totalInstallments, setTotalInstallments] = useState('');
   const [paidInstallments, setPaidInstallments] = useState('0');
   const [startDate, setStartDate] = useState<Date>(getFirstDayOfMonth());
-  const [interestRate, setInterestRate] = useState('');
-  const [notes, setNotes] = useState('');
+  const [endDate, setEndDate] = useState<Date>(getFirstDayOfMonth());
+
+  // Calculate total installments from date range (months between start and end)
+  const calculateTotalInstallments = () => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth()) + 1;
+    return Math.max(1, months);
+  };
+
+  // Calculate interest rate from principal and total amount
+  const calculateInterestRate = () => {
+    const principal = parseFloat(principalAmount) || 0;
+    const total = parseFloat(totalAmount) || 0;
+    if (principal <= 0 || total <= principal) return 0;
+    const totalInstallments = calculateTotalInstallments();
+    // Simple interest rate calculation: ((total - principal) / principal) * (12 / months) * 100
+    const interestAmount = total - principal;
+    const annualRate = (interestAmount / principal) * (12 / totalInstallments) * 100;
+    return Math.round(annualRate * 100) / 100; // Round to 2 decimal places
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -70,11 +89,9 @@ export default function LoansScreen() {
     setPrincipalAmount('');
     setTotalAmount('');
     setMonthlyPayment('');
-    setTotalInstallments('');
     setPaidInstallments('0');
     setStartDate(getFirstDayOfMonth());
-    setInterestRate('');
-    setNotes('');
+    setEndDate(getFirstDayOfMonth());
   };
 
   const handleAddPress = () => {
@@ -89,11 +106,9 @@ export default function LoansScreen() {
     setPrincipalAmount(String(loan.principalAmount || ''));
     setTotalAmount(String(loan.totalAmount || ''));
     setMonthlyPayment(String(loan.monthlyPayment || ''));
-    setTotalInstallments(String(loan.totalInstallments || ''));
     setPaidInstallments(String(loan.paidInstallments || 0));
     setStartDate(loan.startDate ? new Date(loan.startDate) : getFirstDayOfMonth());
-    setInterestRate(loan.interestRate ? String(loan.interestRate) : '');
-    setNotes(loan.notes || '');
+    setEndDate(loan.endDate ? new Date(loan.endDate) : getFirstDayOfMonth());
     setShowModal(true);
   };
 
@@ -144,7 +159,7 @@ export default function LoansScreen() {
   };
 
   const handleSave = async () => {
-    if (!loanName.trim() || !principalAmount || !totalAmount || !monthlyPayment || !totalInstallments) {
+    if (!loanName.trim() || !principalAmount || !totalAmount || !monthlyPayment) {
       return;
     }
 
@@ -154,11 +169,11 @@ export default function LoansScreen() {
         principalAmount: parseFloat(principalAmount),
         totalAmount: parseFloat(totalAmount),
         monthlyPayment: parseFloat(monthlyPayment),
-        totalInstallments: parseInt(totalInstallments, 10),
+        totalInstallments: calculateTotalInstallments(),
         paidInstallments: parseInt(paidInstallments || '0', 10),
         startDate: startDate.toISOString(),
-        interestRate: interestRate ? parseFloat(interestRate) : undefined,
-        notes: notes.trim() || undefined,
+        endDate: endDate.toISOString(),
+        interestRate: calculateInterestRate() || undefined,
       };
 
       if (editingLoan) {
@@ -181,12 +196,21 @@ export default function LoansScreen() {
     resetForm();
   };
 
-  const handleDateChange = (_event: unknown, selectedDate?: Date) => {
+  const handleStartDateChange = (_event: unknown, selectedDate?: Date) => {
     if (Platform.OS === 'android') {
-      setShowDatePicker(false);
+      setShowStartDatePicker(false);
     }
     if (selectedDate) {
       setStartDate(selectedDate);
+    }
+  };
+
+  const handleEndDateChange = (_event: unknown, selectedDate?: Date) => {
+    if (Platform.OS === 'android') {
+      setShowEndDatePicker(false);
+    }
+    if (selectedDate) {
+      setEndDate(selectedDate);
     }
   };
 
@@ -302,7 +326,7 @@ export default function LoansScreen() {
   const textColor = colorMode === 'dark' ? '#ffffff' : '#000000';
   const borderColor = colorMode === 'dark' ? '#333333' : '#e0e0e0';
 
-  const isFormValid = loanName.trim() && principalAmount && totalAmount && monthlyPayment && totalInstallments;
+  const isFormValid = loanName.trim() && principalAmount && totalAmount && monthlyPayment;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: bgColor }}>
@@ -423,21 +447,6 @@ export default function LoansScreen() {
                   </Input>
                 </VStack>
 
-                {/* Total Installments */}
-                <VStack space="xs">
-                  <Text size="sm" color="$textLight500" sx={{ _dark: { color: '$textDark400' } }}>
-                    {t('loans.totalInstallments')} *
-                  </Text>
-                  <Input size="lg" variant="outline">
-                    <InputField
-                      placeholder="12"
-                      value={totalInstallments}
-                      onChangeText={setTotalInstallments}
-                      keyboardType="numeric"
-                    />
-                  </Input>
-                </VStack>
-
                 {/* Paid Installments (only for edit) */}
                 {editingLoan && (
                   <VStack space="xs">
@@ -460,7 +469,7 @@ export default function LoansScreen() {
                   <Text size="sm" color="$textLight500" sx={{ _dark: { color: '$textDark400' } }}>
                     {t('loans.startDate')} *
                   </Text>
-                  <Pressable onPress={() => setShowDatePicker(true)}>
+                  <Pressable onPress={() => setShowStartDatePicker(true)}>
                     <Box
                       borderWidth={1}
                       borderColor={borderColor}
@@ -477,20 +486,20 @@ export default function LoansScreen() {
                   </Pressable>
                 </VStack>
 
-                {/* iOS inline date picker */}
-                {Platform.OS === 'ios' && showDatePicker && (
+                {/* iOS inline start date picker */}
+                {Platform.OS === 'ios' && showStartDatePicker && (
                   <Box>
                     <DateTimePicker
                       value={startDate}
                       mode="date"
                       display="spinner"
-                      onChange={handleDateChange}
+                      onChange={handleStartDateChange}
                       themeVariant={colorMode === 'dark' ? 'dark' : 'light'}
                     />
                     <Button
                       size="sm"
                       variant="outline"
-                      onPress={() => setShowDatePicker(false)}
+                      onPress={() => setShowStartDatePicker(false)}
                       mt="$2"
                     >
                       <ButtonText>{t('common.done')}</ButtonText>
@@ -498,35 +507,49 @@ export default function LoansScreen() {
                   </Box>
                 )}
 
-                {/* Interest Rate (optional) */}
+                {/* End Date */}
                 <VStack space="xs">
                   <Text size="sm" color="$textLight500" sx={{ _dark: { color: '$textDark400' } }}>
-                    {t('loans.interestRate')} (%)
+                    {t('loans.endDate')} *
                   </Text>
-                  <Input size="lg" variant="outline">
-                    <InputField
-                      placeholder="0"
-                      value={interestRate}
-                      onChangeText={setInterestRate}
-                      keyboardType="numeric"
-                    />
-                  </Input>
+                  <Pressable onPress={() => setShowEndDatePicker(true)}>
+                    <Box
+                      borderWidth={1}
+                      borderColor={borderColor}
+                      borderRadius="$lg"
+                      p="$3"
+                    >
+                      <HStack space="md" alignItems="center">
+                        <Calendar size={20} color={colors.primary} />
+                        <Text style={{ color: textColor }}>
+                          {formatDate(endDate)}
+                        </Text>
+                      </HStack>
+                    </Box>
+                  </Pressable>
                 </VStack>
 
-                {/* Notes (optional) */}
-                <VStack space="xs">
-                  <Text size="sm" color="$textLight500" sx={{ _dark: { color: '$textDark400' } }}>
-                    {t('loans.notes')}
-                  </Text>
-                  <Input size="lg" variant="outline">
-                    <InputField
-                      placeholder={t('loans.notes')}
-                      value={notes}
-                      onChangeText={setNotes}
-                      multiline
+                {/* iOS inline end date picker */}
+                {Platform.OS === 'ios' && showEndDatePicker && (
+                  <Box>
+                    <DateTimePicker
+                      value={endDate}
+                      mode="date"
+                      display="spinner"
+                      onChange={handleEndDateChange}
+                      themeVariant={colorMode === 'dark' ? 'dark' : 'light'}
                     />
-                  </Input>
-                </VStack>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onPress={() => setShowEndDatePicker(false)}
+                      mt="$2"
+                    >
+                      <ButtonText>{t('common.done')}</ButtonText>
+                    </Button>
+                  </Box>
+                )}
+
               </VStack>
             </ScrollView>
             <ButtonGroup space="md" style={styles.modalFooter}>
@@ -551,13 +574,23 @@ export default function LoansScreen() {
         </KeyboardAvoidingView>
       </Modal>
 
-      {/* Android Date Picker */}
-      {Platform.OS === 'android' && showDatePicker && (
+      {/* Android Start Date Picker */}
+      {Platform.OS === 'android' && showStartDatePicker && (
         <DateTimePicker
           value={startDate}
           mode="date"
           display="default"
-          onChange={handleDateChange}
+          onChange={handleStartDateChange}
+        />
+      )}
+
+      {/* Android End Date Picker */}
+      {Platform.OS === 'android' && showEndDatePicker && (
+        <DateTimePicker
+          value={endDate}
+          mode="date"
+          display="default"
+          onChange={handleEndDateChange}
         />
       )}
     </SafeAreaView>
@@ -589,7 +622,7 @@ const styles = StyleSheet.create({
   },
   modalBody: {
     padding: 16,
-    maxHeight: 400,
+    maxHeight: 500,
   },
   modalFooter: {
     paddingHorizontal: 16,

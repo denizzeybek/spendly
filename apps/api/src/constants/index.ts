@@ -31,6 +31,7 @@ export const DEFAULT_EXPENSE_CATEGORIES: DefaultCategory[] = [
   { name: 'categories.groceries', icon: 'cart', color: '#8BC34A', type: 'EXPENSE' },
   { name: 'categories.health', icon: 'hospital', color: '#F44336', type: 'EXPENSE' },
   { name: 'categories.entertainment', icon: 'party-popper', color: '#9C27B0', type: 'EXPENSE' },
+  { name: 'categories.loan_payment', icon: 'bank-transfer', color: '#5C6BC0', type: 'EXPENSE' },
   { name: 'categories.other_expense', icon: 'dots-horizontal', color: '#9E9E9E', type: 'EXPENSE' },
 ];
 

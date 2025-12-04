@@ -1,7 +1,9 @@
-import { Loan } from '../../models';
+import { Loan, User, Category, Transaction } from '../../models';
 import { AppError } from '../../middlewares/error.middleware';
 import { CreateLoanInput, UpdateLoanInput } from './loan.schema';
 import mongoose from 'mongoose';
+
+const LOAN_PAYMENT_CATEGORY_NAME = 'categories.loan_payment';
 
 export class LoanService {
   async list(userId: string) {
@@ -94,6 +96,44 @@ export class LoanService {
     if (newPaidInstallments > loan.totalInstallments) {
       throw new AppError('Cannot pay more installments than remaining', 400);
     }
+
+    // Get user to find homeId
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new AppError('User not found', 404);
+    }
+
+    // Find or create loan payment category for this home
+    let loanPaymentCategory = await Category.findOne({
+      name: LOAN_PAYMENT_CATEGORY_NAME,
+      homeId: user.homeId,
+    });
+
+    // If category doesn't exist for this home, create it
+    if (!loanPaymentCategory) {
+      loanPaymentCategory = await Category.create({
+        name: LOAN_PAYMENT_CATEGORY_NAME,
+        icon: 'bank-transfer',
+        color: '#5C6BC0',
+        type: 'EXPENSE',
+        isDefault: true,
+        homeId: user.homeId,
+      });
+    }
+
+    // Create transaction(s) for each installment paid
+    const transactionAmount = loan.monthlyPayment * count;
+    await Transaction.create({
+      type: 'EXPENSE',
+      title: `${loan.name} - Taksit ${loan.paidInstallments + 1}${count > 1 ? `-${loan.paidInstallments + count}` : ''}`,
+      amount: transactionAmount,
+      date: new Date(),
+      categoryId: loanPaymentCategory._id,
+      isShared: false,
+      isRecurring: false,
+      createdById: new mongoose.Types.ObjectId(userId),
+      homeId: user.homeId,
+    });
 
     const updated = await Loan.findByIdAndUpdate(
       id,

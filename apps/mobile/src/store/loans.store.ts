@@ -11,6 +11,7 @@ interface CreateLoanInput {
   totalInstallments: number;
   paidInstallments?: number;
   startDate: string;
+  endDate: string;
   interestRate?: number;
   notes?: string;
 }
@@ -23,6 +24,7 @@ interface UpdateLoanInput {
   totalInstallments?: number;
   paidInstallments?: number;
   startDate?: string;
+  endDate?: string;
   interestRate?: number;
   notes?: string;
 }

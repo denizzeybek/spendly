@@ -31,6 +31,10 @@ export type Loan = {
      */
     startDate?: string;
     /**
+     * Last payment date
+     */
+    endDate?: string;
+    /**
      * Annual interest rate
      */
     interestRate?: number;
@@ -51,10 +55,6 @@ export type Loan = {
      * Payment progress percentage (virtual)
      */
     progressPercentage?: number;
-    /**
-     * Last payment date (virtual)
-     */
-    endDate?: string;
     /**
      * Next payment date (virtual)
      */

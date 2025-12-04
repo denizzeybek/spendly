@@ -9,7 +9,8 @@ export interface ILoanDocument extends Document {
   monthlyPayment: number; // Monthly installment amount
   totalInstallments: number; // Total number of installments
   paidInstallments: number; // Number of paid installments
-  startDate: Date; // When loan started (first payment month)
+  startDate: Date; // First payment date
+  endDate: Date; // Last payment date
   interestRate?: number; // Annual interest rate (optional)
   notes?: string; // Optional notes
   createdAt: Date;
@@ -58,6 +59,10 @@ const loanSchema = new Schema<ILoanDocument>(
       type: Date,
       required: true,
     },
+    endDate: {
+      type: Date,
+      required: true,
+    },
     interestRate: {
       type: Number,
       min: 0,
@@ -101,13 +106,6 @@ loanSchema.virtual('paidAmount').get(function () {
 // Virtual for progress percentage
 loanSchema.virtual('progressPercentage').get(function () {
   return Math.round((this.paidInstallments / this.totalInstallments) * 100);
-});
-
-// Virtual for end date
-loanSchema.virtual('endDate').get(function () {
-  const endDate = new Date(this.startDate);
-  endDate.setMonth(endDate.getMonth() + this.totalInstallments - 1);
-  return endDate;
 });
 
 // Virtual for next payment date

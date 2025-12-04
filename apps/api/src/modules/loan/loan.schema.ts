@@ -7,7 +7,8 @@ export const createLoanSchema = z.object({
   monthlyPayment: z.number().positive('Monthly payment must be positive'),
   totalInstallments: z.number().int().min(1, 'Total installments must be at least 1'),
   paidInstallments: z.number().int().min(0).default(0),
-  startDate: z.string().or(z.date()), // ISO date string or Date
+  startDate: z.string().or(z.date()), // ISO date string or Date - First payment date
+  endDate: z.string().or(z.date()), // ISO date string or Date - Last payment date
   interestRate: z.number().min(0).optional(),
   notes: z.string().optional(),
 });

@@ -58,6 +58,10 @@ export class LoansService {
              */
             startDate: string;
             /**
+             * Last payment date
+             */
+            endDate: string;
+            /**
              * Annual interest rate (optional)
              */
             interestRate?: number;
