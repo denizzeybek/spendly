@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { CategoriesService } from '../client';
 import type { Category } from '../client';
+import type { ApiError } from '../types';
 
 interface CategoriesState {
   categories: Category[];
@@ -22,8 +23,9 @@ export const useCategoriesStore = create<CategoriesState>((set) => ({
     try {
       const response = await CategoriesService.getApiCategories(type);
       set({ categories: response.data, isLoading: false });
-    } catch (err: any) {
-      const message = err.body?.message || err.message || 'Failed to fetch categories';
+    } catch (err) {
+      const error = err as ApiError;
+      const message = error.body?.message || error.message || 'Failed to fetch categories';
       set({ error: message, isLoading: false });
     }
   },

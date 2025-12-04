@@ -50,7 +50,10 @@
     "shared": "Ortak Harcama",
     "recurring": "Tekrarlayan",
     "assignToCard": "Kredi Kartına Ata",
-    "noTransactions": "Henüz işlem yok"
+    "noTransactions": "Henüz işlem yok",
+    "editTransaction": "İşlemi Düzenle",
+    "deleteTitle": "İşlemi Sil",
+    "deleteConfirm": "Bu işlemi silmek istediğinizden emin misiniz?"
   },
   "categories": {
     "title": "Kategoriler",

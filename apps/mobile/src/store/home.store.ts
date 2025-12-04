@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { HomeService } from '../client';
 import type { MonthlySummary } from '../client';
+import type { ApiError } from '../types';
 
 interface HomeUser {
   id: string;
@@ -35,8 +36,9 @@ export const useHomeStore = create<HomeState>((set) => ({
     try {
       const response = await HomeService.getApiHomeSummary(month, year);
       set({ summary: response.data, isLoading: false });
-    } catch (err: any) {
-      const message = err.body?.message || err.message || 'Failed to fetch summary';
+    } catch (err) {
+      const error = err as ApiError;
+      const message = error.body?.message || error.message || 'Failed to fetch summary';
       set({ error: message, isLoading: false });
     }
   },
@@ -46,8 +48,9 @@ export const useHomeStore = create<HomeState>((set) => ({
     try {
       const response = await HomeService.getApiHomeUsers();
       set({ users: response.data, isLoading: false });
-    } catch (err: any) {
-      const message = err.body?.message || err.message || 'Failed to fetch users';
+    } catch (err) {
+      const error = err as ApiError;
+      const message = error.body?.message || error.message || 'Failed to fetch users';
       set({ error: message, isLoading: false });
     }
   },

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { TransactionsService } from '../client';
 import type { Transaction } from '../client';
+import type { ApiError } from '../types';
 
 type FilterType = 'all' | 'INCOME' | 'EXPENSE';
 
@@ -19,6 +20,8 @@ interface TransactionsState {
   searchQuery: string;
   isLoading: boolean;
   isCreating: boolean;
+  isUpdating: boolean;
+  isDeleting: boolean;
   error: string | null;
 
   // Actions
@@ -29,6 +32,16 @@ interface TransactionsState {
     amount: number;
     date: string;
     categoryId: string;
+    assignedCardId?: string;
+    isShared?: boolean;
+    isRecurring?: boolean;
+  }) => Promise<void>;
+  updateTransaction: (id: string, data: {
+    type?: 'INCOME' | 'EXPENSE';
+    title?: string;
+    amount?: number;
+    date?: string;
+    categoryId?: string;
     assignedCardId?: string;
     isShared?: boolean;
     isRecurring?: boolean;
@@ -45,6 +58,8 @@ export const useTransactionsStore = create<TransactionsState>((set, get) => ({
   searchQuery: '',
   isLoading: false,
   isCreating: false,
+  isUpdating: false,
+  isDeleting: false,
   error: null,
 
   fetchTransactions: async () => {
@@ -54,8 +69,9 @@ export const useTransactionsStore = create<TransactionsState>((set, get) => ({
       const type = filter === 'all' ? undefined : filter;
       const response = await TransactionsService.getApiTransactions(type);
       set({ transactions: response.data, isLoading: false });
-    } catch (err: any) {
-      const message = err.body?.message || err.message || 'Failed to fetch transactions';
+    } catch (err) {
+      const error = err as ApiError;
+      const message = error.body?.message || error.message || 'Failed to fetch transactions';
       set({ error: message, isLoading: false });
     }
   },
@@ -67,21 +83,41 @@ export const useTransactionsStore = create<TransactionsState>((set, get) => ({
       set({ isCreating: false });
       // Refresh transactions list
       get().fetchTransactions();
-    } catch (err: any) {
-      const message = err.body?.message || err.message || 'Failed to create transaction';
+    } catch (err) {
+      const error = err as ApiError;
+      const message = error.body?.message || error.message || 'Failed to create transaction';
       set({ error: message, isCreating: false });
       throw new Error(message);
     }
   },
 
-  deleteTransaction: async (id) => {
+  updateTransaction: async (id, data) => {
+    set({ isUpdating: true, error: null });
     try {
-      await TransactionsService.deleteApiTransactions(id);
+      await TransactionsService.patchApiTransactions(id, data);
+      set({ isUpdating: false });
       // Refresh transactions list
       get().fetchTransactions();
-    } catch (err: any) {
-      const message = err.body?.message || err.message || 'Failed to delete transaction';
-      set({ error: message });
+    } catch (err) {
+      const error = err as ApiError;
+      const message = error.body?.message || error.message || 'Failed to update transaction';
+      set({ error: message, isUpdating: false });
+      throw new Error(message);
+    }
+  },
+
+  deleteTransaction: async (id) => {
+    set({ isDeleting: true, error: null });
+    try {
+      await TransactionsService.deleteApiTransactions(id);
+      set({ isDeleting: false });
+      // Refresh transactions list
+      get().fetchTransactions();
+    } catch (err) {
+      const error = err as ApiError;
+      const message = error.body?.message || error.message || 'Failed to delete transaction';
+      set({ error: message, isDeleting: false });
+      throw new Error(message);
     }
   },
 

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import * as SecureStore from 'expo-secure-store';
 import { AuthService, OpenAPI } from '../client';
 import type { User, Home } from '../client';
+import type { ApiError } from '../types';
 
 const TOKEN_KEY = 'accessToken';
 const REFRESH_TOKEN_KEY = 'refreshToken';
@@ -39,8 +40,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       OpenAPI.TOKEN = accessToken;
 
       set({ user, home, isAuthenticated: true, isLoading: false });
-    } catch (err: any) {
-      const message = err.body?.message || err.message || 'Login failed';
+    } catch (err) {
+      const error = err as ApiError;
+      const message = error.body?.message || error.message || 'Login failed';
       set({ error: message, isLoading: false });
       throw new Error(message);
     }
@@ -57,8 +59,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       OpenAPI.TOKEN = accessToken;
 
       set({ user, home, isAuthenticated: true, isLoading: false });
-    } catch (err: any) {
-      const message = err.body?.message || err.message || 'Registration failed';
+    } catch (err) {
+      const error = err as ApiError;
+      const message = error.body?.message || error.message || 'Registration failed';
       set({ error: message, isLoading: false });
       throw new Error(message);
     }

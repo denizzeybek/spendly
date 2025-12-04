@@ -50,7 +50,10 @@
     "shared": "Shared Expense",
     "recurring": "Recurring",
     "assignToCard": "Assign to Card",
-    "noTransactions": "No transactions yet"
+    "noTransactions": "No transactions yet",
+    "editTransaction": "Edit Transaction",
+    "deleteTitle": "Delete Transaction",
+    "deleteConfirm": "Are you sure you want to delete this transaction?"
   },
   "categories": {
     "title": "Categories",

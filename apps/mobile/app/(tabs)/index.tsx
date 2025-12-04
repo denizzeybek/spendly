@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 import { ScrollView, RefreshControl } from 'react-native';
 import {
   Box,
@@ -10,6 +10,7 @@ import {
   Pressable,
 } from '@gluestack-ui/themed';
 import { useTranslation } from 'react-i18next';
+import { useFocusEffect } from 'expo-router';
 import { ArrowDownLeft, ArrowUpRight } from 'lucide-react-native';
 import { useAuthStore, useHomeStore } from '../../src/store';
 import { formatCurrency } from '../../src/utils';
@@ -20,9 +21,12 @@ export default function HomeScreen() {
   const { home } = useAuthStore();
   const { summary, isLoading, fetchSummary } = useHomeStore();
 
-  useEffect(() => {
-    fetchSummary();
-  }, []);
+  // Refetch summary when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchSummary();
+    }, [])
+  );
 
   const currency = home?.currency || 'TRY';
 
