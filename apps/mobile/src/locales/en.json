@@ -179,6 +179,10 @@
     "sharedExpense": "My Shared Expense",
     "personalExpense": "My Personal Expense",
     "creditCardDebt": "Credit Card Debt",
-    "balance": "Net Balance"
+    "balance": "Net Balance",
+    "sharedExpenses": "Shared Expenses",
+    "total": "Total",
+    "perPerson": "Per Person",
+    "people": "people"
   }
 }

@@ -179,6 +179,10 @@
     "sharedExpense": "Ortak Harcama Payım",
     "personalExpense": "Kişisel Harcamam",
     "creditCardDebt": "Kredi Kartı Borcu",
-    "balance": "Net Bakiye"
+    "balance": "Net Bakiye",
+    "sharedExpenses": "Ortak Harcamalar",
+    "total": "Toplam",
+    "perPerson": "Kişi Başı",
+    "people": "kişi"
   }
 }

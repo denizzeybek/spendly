@@ -75,7 +75,7 @@ export class HomeService {
         const cardIds = userCreditCards.map((c) => c._id);
 
         // Aggregate transactions for this user
-        const [incomeAgg, expenseAgg, sharedExpenseAgg, creditCardAgg] = await Promise.all([
+        const [incomeAgg, personalExpenseAgg, mySharedExpenseAgg, allSharedExpenseAgg, creditCardAgg] = await Promise.all([
           // Total income created by this user
           Transaction.aggregate([
             {
@@ -88,24 +88,37 @@ export class HomeService {
             },
             { $group: { _id: null, total: { $sum: '$amount' } } },
           ]),
-          // Total expense created by this user
+          // Personal expenses (non-shared) created by this user
           Transaction.aggregate([
             {
               $match: {
                 homeId: homeObjectId,
                 createdById: userId,
                 type: 'EXPENSE',
+                isShared: { $ne: true },
                 date: { $gte: startDate, $lte: endDate },
               },
             },
             { $group: { _id: null, total: { $sum: '$amount' } } },
           ]),
-          // Shared expenses created by this user (divided by 2)
+          // Shared expenses created by this user
           Transaction.aggregate([
             {
               $match: {
                 homeId: homeObjectId,
                 createdById: userId,
+                type: 'EXPENSE',
+                isShared: true,
+                date: { $gte: startDate, $lte: endDate },
+              },
+            },
+            { $group: { _id: null, total: { $sum: '$amount' } } },
+          ]),
+          // ALL shared expenses in the home (to calculate user's share)
+          Transaction.aggregate([
+            {
+              $match: {
+                homeId: homeObjectId,
                 type: 'EXPENSE',
                 isShared: true,
                 date: { $gte: startDate, $lte: endDate },
@@ -130,12 +143,17 @@ export class HomeService {
         ]);
 
         const totalIncome = incomeAgg[0]?.total || 0;
-        const totalExpense = expenseAgg[0]?.total || 0;
-        const sharedExpense = sharedExpenseAgg[0]?.total || 0;
+        const personalExpense = personalExpenseAgg[0]?.total || 0;
+        const mySharedExpense = mySharedExpenseAgg[0]?.total || 0;
+        const allSharedExpense = allSharedExpenseAgg[0]?.total || 0;
         const creditCardDebt = creditCardAgg[0]?.total || 0;
 
-        // For shared expenses, user pays half
-        const sharedExpenseShare = sharedExpense / 2;
+        // User's share of ALL shared expenses (divided by number of users in home)
+        const userCount = users.length || 1;
+        const sharedExpenseShare = allSharedExpense / userCount;
+
+        // Total expense for this user = personal + their share of shared
+        const totalExpense = personalExpense + sharedExpenseShare;
 
         return {
           userId: user._id.toString(),
@@ -143,18 +161,23 @@ export class HomeService {
           userEmail: user.email,
           totalIncome,
           totalExpense,
-          personalExpense: totalExpense - sharedExpense,
+          personalExpense,
           sharedExpenseShare,
+          mySharedExpense, // What this user entered as shared
           creditCardDebt,
           balance: totalIncome - totalExpense,
         };
       })
     );
 
+    // Calculate total shared expenses for the home
+    const totalSharedExpense = userSummaries.reduce((sum, u) => sum + (u.mySharedExpense || 0), 0);
+
     return {
       month,
       year,
       users: userSummaries,
+      totalSharedExpense,
     };
   }
 

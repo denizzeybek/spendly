@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ScrollView, RefreshControl } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import {
   Box,
   VStack,
@@ -25,13 +26,16 @@ export default function ReportsScreen() {
 
   const currency = home?.currency || 'TRY';
 
-  useEffect(() => {
-    if (view === 'overview') {
-      fetchSummary();
-    } else {
-      fetchUserSummaries();
-    }
-  }, [view, fetchSummary, fetchUserSummaries]);
+  // Fetch data when screen is focused (including when returning from other tabs)
+  useFocusEffect(
+    useCallback(() => {
+      if (view === 'overview') {
+        fetchSummary();
+      } else {
+        fetchUserSummaries();
+      }
+    }, [view, fetchSummary, fetchUserSummaries])
+  );
 
   const onRefresh = () => {
     if (view === 'overview') {
@@ -142,6 +146,40 @@ export default function ReportsScreen() {
 
           {view === 'users' && userSummaries && (
             <VStack space="md">
+              {/* Shared Expenses Card */}
+              {userSummaries.totalSharedExpense > 0 && (
+                <Box
+                  bg="$warning100"
+                  sx={{ _dark: { bg: '$warning900' } }}
+                  p="$4"
+                  borderRadius="$xl"
+                >
+                  <HStack space="sm" alignItems="center" mb="$2">
+                    <Text size="xl">👥</Text>
+                    <Text size="lg" fontWeight="$semibold" color="$warning700" sx={{ _dark: { color: '$warning300' } }}>
+                      {t('summary.sharedExpenses')}
+                    </Text>
+                  </HStack>
+                  <HStack justifyContent="space-between" mb="$1">
+                    <Text size="sm" color="$warning700" sx={{ _dark: { color: '$warning300' } }}>
+                      {t('summary.total')}
+                    </Text>
+                    <Text size="md" fontWeight="$bold" color="$warning700" sx={{ _dark: { color: '$warning300' } }}>
+                      {formatCurrency(userSummaries.totalSharedExpense, currency)}
+                    </Text>
+                  </HStack>
+                  <HStack justifyContent="space-between">
+                    <Text size="sm" color="$warning600" sx={{ _dark: { color: '$warning400' } }}>
+                      {t('summary.perPerson')} ({userSummaries.users.length} {t('summary.people')})
+                    </Text>
+                    <Text size="sm" fontWeight="$medium" color="$warning600" sx={{ _dark: { color: '$warning400' } }}>
+                      {formatCurrency(userSummaries.totalSharedExpense / (userSummaries.users.length || 1), currency)}
+                    </Text>
+                  </HStack>
+                </Box>
+              )}
+
+              {/* User Cards */}
               {userSummaries.users.map((user) => (
                 <Box
                   key={user.userId}
@@ -155,7 +193,7 @@ export default function ReportsScreen() {
                   </Text>
                   <VStack space="sm">
                     <HStack justifyContent="space-between">
-                      <Text size="sm" color="$textLight500">
+                      <Text size="sm" color="$textLight500" sx={{ _dark: { color: '$textDark400' } }}>
                         {t('summary.totalIncome')}
                       </Text>
                       <Text size="sm" color="$success500">
@@ -163,15 +201,7 @@ export default function ReportsScreen() {
                       </Text>
                     </HStack>
                     <HStack justifyContent="space-between">
-                      <Text size="sm" color="$textLight500">
-                        {t('summary.totalExpense')}
-                      </Text>
-                      <Text size="sm" color="$error500">
-                        {formatCurrency(user.totalExpense, currency)}
-                      </Text>
-                    </HStack>
-                    <HStack justifyContent="space-between">
-                      <Text size="sm" color="$textLight500">
+                      <Text size="sm" color="$textLight500" sx={{ _dark: { color: '$textDark400' } }}>
                         {t('summary.personalExpense')}
                       </Text>
                       <Text size="sm" color="$error400">
@@ -179,7 +209,7 @@ export default function ReportsScreen() {
                       </Text>
                     </HStack>
                     <HStack justifyContent="space-between">
-                      <Text size="sm" color="$textLight500">
+                      <Text size="sm" color="$textLight500" sx={{ _dark: { color: '$textDark400' } }}>
                         {t('summary.sharedExpense')}
                       </Text>
                       <Text size="sm" color="$warning500">
@@ -187,11 +217,11 @@ export default function ReportsScreen() {
                       </Text>
                     </HStack>
                     <HStack justifyContent="space-between">
-                      <Text size="sm" color="$textLight500">
-                        {t('summary.creditCardDebt')}
+                      <Text size="sm" color="$textLight500" sx={{ _dark: { color: '$textDark400' } }}>
+                        {t('summary.totalExpense')}
                       </Text>
-                      <Text size="sm" color="$error500">
-                        {formatCurrency(user.creditCardDebt, currency)}
+                      <Text size="sm" color="$error500" fontWeight="$medium">
+                        {formatCurrency(user.totalExpense, currency)}
                       </Text>
                     </HStack>
                     <Box

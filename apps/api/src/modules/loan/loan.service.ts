@@ -3,10 +3,7 @@ import { AppError } from '../../middlewares/error.middleware';
 import { CreateLoanInput, UpdateLoanInput } from './loan.schema';
 import mongoose from 'mongoose';
 
-const LOAN_PAYMENT_CATEGORY = {
-  nameTr: 'Kredi Taksiti',
-  nameEn: 'Loan Payment',
-};
+const LOAN_PAYMENT_CATEGORY_NAME = 'Kredi Taksiti';
 
 export class LoanService {
   async list(userId: string) {
@@ -108,19 +105,18 @@ export class LoanService {
 
     // Find or create loan payment category for this home
     let loanPaymentCategory = await Category.findOne({
-      nameTr: LOAN_PAYMENT_CATEGORY.nameTr,
+      name: LOAN_PAYMENT_CATEGORY_NAME,
       homeId: user.homeId,
     });
 
     // If category doesn't exist for this home, create it
     if (!loanPaymentCategory) {
       loanPaymentCategory = await Category.create({
-        nameTr: LOAN_PAYMENT_CATEGORY.nameTr,
-        nameEn: LOAN_PAYMENT_CATEGORY.nameEn,
-        icon: 'bank-transfer',
+        name: LOAN_PAYMENT_CATEGORY_NAME,
+        icon: '🏦',
         color: '#5C6BC0',
         type: 'EXPENSE',
-        isDefault: true,
+        isDefault: false,
         homeId: user.homeId,
       });
     }

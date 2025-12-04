@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { ScrollView as RNScrollView, Animated, Dimensions, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { ScrollView as RNScrollView, Animated } from 'react-native';
 import {
   Box,
   VStack,
@@ -43,8 +43,11 @@ const PRESET_COLORS = [
 const PRESET_ICONS = [
   '🏠', '🚗', '🍔', '🛒', '💊', '🎬', '🎮', '📱',
   '💡', '💧', '🔥', '🌐', '🏋️', '📺', '🎵', '📚',
-  '✈️', '🎁', '👕', '💰', '💳', '🏦', '📊', '🎯',
+  '✈️', '🎁', '👕', '💰', '💳', '🏦', '📊', '🎯', '💸',
 ];
+
+const DEFAULT_EXPENSE_ICON = '🏠';
+const DEFAULT_INCOME_ICON = '💸';
 
 type TransactionType = 'INCOME' | 'EXPENSE';
 
@@ -143,7 +146,7 @@ export default function AddTransactionScreen() {
     setNewCategoryName('');
     setNewCategoryType(type); // Default to current transaction type
     setNewCategoryColor(PRESET_COLORS[0]);
-    setNewCategoryIcon(PRESET_ICONS[0]);
+    setNewCategoryIcon(type === 'INCOME' ? DEFAULT_INCOME_ICON : DEFAULT_EXPENSE_ICON);
     closeCategoryDropdown();
     setShowAddCategoryModal(true);
   };
@@ -297,7 +300,7 @@ export default function AddTransactionScreen() {
                       </Text>
                     </Box>
                   ) : (
-                    filteredCategories.map((cat, index) => (
+                    filteredCategories.map((cat) => (
                       <Pressable
                         key={cat.id}
                         onPress={() => handleSelectCategory(cat)}
