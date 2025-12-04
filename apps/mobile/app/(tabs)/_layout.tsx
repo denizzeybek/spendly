@@ -1,12 +1,18 @@
-import { Tabs } from 'expo-router';
+import { Tabs, Redirect } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Home, ArrowLeftRight, PlusCircle, PieChart, Settings } from 'lucide-react-native';
-import { useThemeStore } from '../../src/store';
+import { useThemeStore, useAuthStore } from '../../src/store';
 import { colors } from '../../src/constants/theme';
 
 export default function TabLayout() {
   const { t } = useTranslation();
   const colorMode = useThemeStore((state) => state.colorMode);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  // Redirect to login if not authenticated
+  if (!isAuthenticated) {
+    return <Redirect href="/(auth)/login" />;
+  }
 
   const isDark = colorMode === 'dark';
   const bgColor = isDark ? '#171717' : '#FFFFFF';
