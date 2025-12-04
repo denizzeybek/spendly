@@ -55,6 +55,23 @@ export class HomeController {
       next(error);
     }
   }
+
+  async getUserSummaries(
+    req: Request<object, object, object, { month?: string; year?: string }>,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const now = new Date();
+      const month = req.query.month ? parseInt(req.query.month) : now.getMonth() + 1;
+      const year = req.query.year ? parseInt(req.query.year) : now.getFullYear();
+
+      const result = await homeService.getUserSummaries(req.user!.homeId, month, year);
+      sendSuccess(res, result);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const homeController = new HomeController();

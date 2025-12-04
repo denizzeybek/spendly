@@ -56,6 +56,108 @@ export class HomeService {
     return usersWithCards;
   }
 
+  async getUserSummaries(homeId: string, month: number, year: number) {
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+
+    const homeObjectId = new mongoose.Types.ObjectId(homeId);
+
+    // Get all users in home
+    const users = await User.find({ homeId: homeObjectId });
+
+    // Get summaries for each user
+    const userSummaries = await Promise.all(
+      users.map(async (user) => {
+        const userId = user._id;
+
+        // Get user's credit cards
+        const userCreditCards = await CreditCard.find({ userId });
+        const cardIds = userCreditCards.map((c) => c._id);
+
+        // Aggregate transactions for this user
+        const [incomeAgg, expenseAgg, sharedExpenseAgg, creditCardAgg] = await Promise.all([
+          // Total income created by this user
+          Transaction.aggregate([
+            {
+              $match: {
+                homeId: homeObjectId,
+                createdById: userId,
+                type: 'INCOME',
+                date: { $gte: startDate, $lte: endDate },
+              },
+            },
+            { $group: { _id: null, total: { $sum: '$amount' } } },
+          ]),
+          // Total expense created by this user
+          Transaction.aggregate([
+            {
+              $match: {
+                homeId: homeObjectId,
+                createdById: userId,
+                type: 'EXPENSE',
+                date: { $gte: startDate, $lte: endDate },
+              },
+            },
+            { $group: { _id: null, total: { $sum: '$amount' } } },
+          ]),
+          // Shared expenses created by this user (divided by 2)
+          Transaction.aggregate([
+            {
+              $match: {
+                homeId: homeObjectId,
+                createdById: userId,
+                type: 'EXPENSE',
+                isShared: true,
+                date: { $gte: startDate, $lte: endDate },
+              },
+            },
+            { $group: { _id: null, total: { $sum: '$amount' } } },
+          ]),
+          // Credit card debt (expenses assigned to user's cards)
+          cardIds.length > 0
+            ? Transaction.aggregate([
+                {
+                  $match: {
+                    homeId: homeObjectId,
+                    assignedCardId: { $in: cardIds },
+                    type: 'EXPENSE',
+                    date: { $gte: startDate, $lte: endDate },
+                  },
+                },
+                { $group: { _id: null, total: { $sum: '$amount' } } },
+              ])
+            : [{ total: 0 }],
+        ]);
+
+        const totalIncome = incomeAgg[0]?.total || 0;
+        const totalExpense = expenseAgg[0]?.total || 0;
+        const sharedExpense = sharedExpenseAgg[0]?.total || 0;
+        const creditCardDebt = creditCardAgg[0]?.total || 0;
+
+        // For shared expenses, user pays half
+        const sharedExpenseShare = sharedExpense / 2;
+
+        return {
+          userId: user._id.toString(),
+          userName: user.name,
+          userEmail: user.email,
+          totalIncome,
+          totalExpense,
+          personalExpense: totalExpense - sharedExpense,
+          sharedExpenseShare,
+          creditCardDebt,
+          balance: totalIncome - totalExpense,
+        };
+      })
+    );
+
+    return {
+      month,
+      year,
+      users: userSummaries,
+    };
+  }
+
   async getSummary(homeId: string, month: number, year: number) {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0, 23, 59, 59, 999);

@@ -20,7 +20,7 @@ type ReportView = 'overview' | 'users';
 export default function ReportsScreen() {
   const { t } = useTranslation();
   const { home } = useAuthStore();
-  const { summary, users, isLoading, fetchSummary, fetchUsers } = useHomeStore();
+  const { summary, userSummaries, isLoading, fetchSummary, fetchUserSummaries } = useHomeStore();
   const [view, setView] = useState<ReportView>('overview');
 
   const currency = home?.currency || 'TRY';
@@ -29,15 +29,15 @@ export default function ReportsScreen() {
     if (view === 'overview') {
       fetchSummary();
     } else {
-      fetchUsers();
+      fetchUserSummaries();
     }
-  }, [view, fetchSummary, fetchUsers]);
+  }, [view, fetchSummary, fetchUserSummaries]);
 
   const onRefresh = () => {
     if (view === 'overview') {
       fetchSummary();
     } else {
-      fetchUsers();
+      fetchUserSummaries();
     }
   };
 
@@ -139,18 +139,18 @@ export default function ReportsScreen() {
             </>
           )}
 
-          {view === 'users' && (
+          {view === 'users' && userSummaries && (
             <VStack space="md">
-              {users.map((user) => (
+              {userSummaries.users.map((user) => (
                 <Box
-                  key={user.id}
+                  key={user.userId}
                   bg="$backgroundLight0"
                   sx={{ _dark: { bg: '$backgroundDark900' } }}
                   p="$4"
                   borderRadius="$xl"
                 >
                   <Text size="lg" fontWeight="$semibold" mb="$3">
-                    {user.name}
+                    {user.userName}
                   </Text>
                   <VStack space="sm">
                     <HStack justifyContent="space-between">
@@ -158,15 +158,23 @@ export default function ReportsScreen() {
                         {t('summary.totalIncome')}
                       </Text>
                       <Text size="sm" color="$success500">
-                        {formatCurrency(0, currency)}
+                        {formatCurrency(user.totalIncome, currency)}
                       </Text>
                     </HStack>
                     <HStack justifyContent="space-between">
                       <Text size="sm" color="$textLight500">
-                        {t('summary.creditCardDebt')}
+                        {t('summary.totalExpense')}
                       </Text>
                       <Text size="sm" color="$error500">
-                        {formatCurrency(0, currency)}
+                        {formatCurrency(user.totalExpense, currency)}
+                      </Text>
+                    </HStack>
+                    <HStack justifyContent="space-between">
+                      <Text size="sm" color="$textLight500">
+                        {t('summary.personalExpense')}
+                      </Text>
+                      <Text size="sm" color="$error400">
+                        {formatCurrency(user.personalExpense, currency)}
                       </Text>
                     </HStack>
                     <HStack justifyContent="space-between">
@@ -174,7 +182,15 @@ export default function ReportsScreen() {
                         {t('summary.sharedExpense')}
                       </Text>
                       <Text size="sm" color="$warning500">
-                        {formatCurrency(0, currency)}
+                        {formatCurrency(user.sharedExpenseShare, currency)}
+                      </Text>
+                    </HStack>
+                    <HStack justifyContent="space-between">
+                      <Text size="sm" color="$textLight500">
+                        {t('summary.creditCardDebt')}
+                      </Text>
+                      <Text size="sm" color="$error500">
+                        {formatCurrency(user.creditCardDebt, currency)}
                       </Text>
                     </HStack>
                     <Box
@@ -188,8 +204,12 @@ export default function ReportsScreen() {
                         <Text size="md" fontWeight="$semibold">
                           {t('summary.balance')}
                         </Text>
-                        <Text size="md" fontWeight="$bold" color="$success500">
-                          {formatCurrency(0, currency)}
+                        <Text
+                          size="md"
+                          fontWeight="$bold"
+                          color={user.balance >= 0 ? '$success500' : '$error500'}
+                        >
+                          {formatCurrency(user.balance, currency)}
                         </Text>
                       </HStack>
                     </Box>

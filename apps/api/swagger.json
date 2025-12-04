@@ -866,6 +866,40 @@
         }
       }
     },
+    "/api/home/user-summaries": {
+      "get": {
+        "summary": "Get monthly summary by user",
+        "tags": [
+          "Home"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "month",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "year",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User summaries"
+          }
+        }
+      }
+    },
     "/api/transactions": {
       "get": {
         "summary": "List transactions",

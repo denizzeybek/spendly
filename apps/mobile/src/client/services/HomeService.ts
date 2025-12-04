@@ -67,4 +67,24 @@ export class HomeService {
             },
         });
     }
+    /**
+     * Get monthly summary by user
+     * @param month
+     * @param year
+     * @returns any User summaries
+     * @throws ApiError
+     */
+    public static getApiHomeUserSummaries(
+        month?: number,
+        year?: number,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/home/user-summaries',
+            query: {
+                'month': month,
+                'year': year,
+            },
+        });
+    }
 }

@@ -84,4 +84,27 @@ router.get('/users', homeController.getUsers);
  */
 router.get('/summary', homeController.getSummary);
 
+/**
+ * @swagger
+ * /api/home/user-summaries:
+ *   get:
+ *     summary: Get monthly summary by user
+ *     tags: [Home]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: month
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: year
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: User summaries
+ */
+router.get('/user-summaries', homeController.getUserSummaries);
+
 export { router as homeRoutes };
