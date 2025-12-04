@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { ScrollView } from 'react-native';
 import {
   Box,
@@ -22,7 +22,7 @@ import {
   Heading,
 } from '@gluestack-ui/themed';
 import { useTranslation } from 'react-i18next';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { Users, Repeat, CreditCard, ChevronDown } from 'lucide-react-native';
 import { useTransactionsStore, useCategoriesStore, useHomeStore } from '../../src/store';
 import type { HomeUser, CreditCard as CreditCardType } from '../../src/store';
@@ -46,10 +46,24 @@ export default function AddTransactionScreen() {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showCardModal, setShowCardModal] = useState(false);
 
-  useEffect(() => {
-    fetchCategories();
-    fetchUsers();
-  }, [fetchCategories, fetchUsers]);
+  // Reset form when screen comes into focus
+  const resetForm = useCallback(() => {
+    setType('EXPENSE');
+    setTitle('');
+    setAmount('');
+    setSelectedCategory(null);
+    setSelectedCard(null);
+    setIsShared(false);
+    setIsRecurring(false);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      resetForm();
+      fetchCategories();
+      fetchUsers();
+    }, [resetForm, fetchCategories, fetchUsers])
+  );
 
   useEffect(() => {
     setSelectedCategory(null);

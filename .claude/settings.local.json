@@ -27,7 +27,8 @@
       "Bash(xargs kill:*)",
       "Bash(python3:*)",
       "Bash(open -a Simulator)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(npx eslint:*)"
     ],
     "deny": [],
     "ask": []
