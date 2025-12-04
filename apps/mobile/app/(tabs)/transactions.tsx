@@ -29,7 +29,7 @@ import {
 } from '@gluestack-ui/themed';
 import { useTranslation } from 'react-i18next';
 import { router, useFocusEffect } from 'expo-router';
-import { Search, Plus, Receipt, Trash2, Edit3, ChevronDown } from 'lucide-react-native';
+import { Search, Plus, Receipt, Trash2, ChevronDown } from 'lucide-react-native';
 import { useAuthStore, useTransactionsStore, useFilteredTransactions, useCategoriesStore } from '../../src/store';
 import { formatCurrency } from '../../src/utils';
 import { colors } from '../../src/constants/theme';
@@ -60,7 +60,6 @@ export default function TransactionsScreen() {
     filter,
     isLoading,
     isUpdating,
-    isDeleting,
     fetchTransactions,
     updateTransaction,
     deleteTransaction,
@@ -87,7 +86,7 @@ export default function TransactionsScreen() {
     useCallback(() => {
       fetchTransactions();
       fetchCategories();
-    }, [])
+    }, [fetchTransactions, fetchCategories])
   );
 
   const currency = home?.currency || 'TRY';
@@ -173,7 +172,7 @@ export default function TransactionsScreen() {
         setSelectedCategory(null);
       }
     }
-  }, [editType]);
+  }, [editType, showEditModal, editingTransaction, selectedCategory?.type]);
 
   const renderTransaction = ({ item }: { item: TransactionItem }) => (
     <Pressable onPress={() => handleEditPress(item)}>

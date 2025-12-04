@@ -17,7 +17,6 @@ import {
   FormControlErrorText,
   Pressable,
   HStack,
-  Icon,
 } from '@gluestack-ui/themed';
 import { Link, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';

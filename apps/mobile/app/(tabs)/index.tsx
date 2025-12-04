@@ -6,8 +6,6 @@ import {
   HStack,
   Text,
   Heading,
-  Spinner,
-  Pressable,
 } from '@gluestack-ui/themed';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect } from 'expo-router';
@@ -25,7 +23,7 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       fetchSummary();
-    }, [])
+    }, [fetchSummary])
   );
 
   const currency = home?.currency || 'TRY';

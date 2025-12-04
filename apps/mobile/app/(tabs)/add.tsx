@@ -25,6 +25,7 @@ import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
 import { Users, Repeat, CreditCard, ChevronDown } from 'lucide-react-native';
 import { useTransactionsStore, useCategoriesStore, useHomeStore } from '../../src/store';
+import type { HomeUser, CreditCard as CreditCardType } from '../../src/store';
 import { colors } from '../../src/constants/theme';
 
 type TransactionType = 'INCOME' | 'EXPENSE';
@@ -48,7 +49,7 @@ export default function AddTransactionScreen() {
   useEffect(() => {
     fetchCategories();
     fetchUsers();
-  }, []);
+  }, [fetchCategories, fetchUsers]);
 
   useEffect(() => {
     setSelectedCategory(null);
@@ -59,8 +60,8 @@ export default function AddTransactionScreen() {
   );
 
   const creditCards = users
-    .filter((u: any) => u.creditCard)
-    .map((u: any) => u.creditCard);
+    .filter((u: HomeUser) => u.creditCard)
+    .map((u: HomeUser) => u.creditCard) as CreditCardType[];
 
   const handleSubmit = async () => {
     if (!title || !amount || !selectedCategory) return;
@@ -266,7 +267,7 @@ export default function AddTransactionScreen() {
                 >
                   <Text size="md" color="$textLight500">None</Text>
                 </Pressable>
-                {creditCards.map((card: any) => (
+                {creditCards.map((card) => (
                   <Pressable
                     key={card.id}
                     onPress={() => {

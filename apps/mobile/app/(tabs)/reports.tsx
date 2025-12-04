@@ -5,7 +5,6 @@ import {
   VStack,
   HStack,
   Text,
-  Heading,
   ButtonGroup,
   Button,
   ButtonText,
@@ -15,7 +14,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useAuthStore, useHomeStore } from '../../src/store';
 import { formatCurrency } from '../../src/utils';
-import { colors } from '../../src/constants/theme';
 
 type ReportView = 'overview' | 'users';
 
@@ -33,7 +31,7 @@ export default function ReportsScreen() {
     } else {
       fetchUsers();
     }
-  }, [view]);
+  }, [view, fetchSummary, fetchUsers]);
 
   const onRefresh = () => {
     if (view === 'overview') {

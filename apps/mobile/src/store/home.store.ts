@@ -3,7 +3,7 @@ import { HomeService } from '../client';
 import type { MonthlySummary } from '../client';
 import type { ApiError } from '../types';
 
-interface HomeUser {
+export interface HomeUser {
   id: string;
   name: string;
   email: string;
@@ -11,6 +11,11 @@ interface HomeUser {
     id: string;
     name: string;
   };
+}
+
+export interface CreditCard {
+  id: string;
+  name: string;
 }
 
 interface HomeState {
