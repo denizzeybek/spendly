@@ -23,14 +23,14 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Check } from 'lucide-react-native';
 import { PRESET_COLORS, PRESET_ICONS, DEFAULT_EXPENSE_ICON, DEFAULT_INCOME_ICON } from '../constants/presets';
-import { CategoryType, TransactionType } from '../types';
+import { CategoryType } from '../types';
 
 interface AddCategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (category: { name: string; icon: string; color: string; type: CategoryType }) => Promise<void>;
   isLoading?: boolean;
-  defaultType?: TransactionType;
+  defaultType?: 'INCOME' | 'EXPENSE';
 }
 
 export function AddCategoryModal({

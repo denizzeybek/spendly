@@ -19,7 +19,7 @@ export class TransactionsService {
      * @throws ApiError
      */
     public static getApiTransactions(
-        type?: 'INCOME' | 'EXPENSE',
+        type?: 'INCOME' | 'EXPENSE' | 'TRANSFER',
         categoryId?: string,
         month?: number,
         year?: number,
@@ -48,7 +48,7 @@ export class TransactionsService {
     public static postApiTransactions(
         requestBody: {
             type: 'INCOME' | 'EXPENSE';
-            title: string;
+            title?: string;
             amount: number;
             date: string;
             categoryId: string;
@@ -63,6 +63,31 @@ export class TransactionsService {
             url: '/api/transactions',
             body: requestBody,
             mediaType: 'application/json',
+        });
+    }
+    /**
+     * Create a transfer between users
+     * @param requestBody
+     * @returns any Transfer created
+     * @throws ApiError
+     */
+    public static postApiTransactionsTransfer(
+        requestBody: {
+            amount: number;
+            date: string;
+            toUserId: string;
+            title?: string;
+        },
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/transactions/transfer',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `Cannot transfer to yourself`,
+                404: `Recipient not found`,
+            },
         });
     }
     /**

@@ -20,7 +20,7 @@ export interface IHome {
 }
 
 // Transaction Types
-export type TransactionType = 'INCOME' | 'EXPENSE';
+export type TransactionType = 'INCOME' | 'EXPENSE' | 'TRANSFER';
 
 export interface ITransaction {
   id: string;
@@ -35,6 +35,10 @@ export interface ITransaction {
   recurringDay?: number;
   createdById: string;
   homeId: string;
+  // Transfer specific fields
+  fromUserId?: string;
+  toUserId?: string;
+  linkedTransactionId?: string;
   createdAt: Date;
   updatedAt: Date;
 }

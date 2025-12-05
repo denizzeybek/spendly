@@ -35,14 +35,22 @@
     - ✅ Kategori ekle, düzenle, sil eksik
     - ✅ Kategorilerin yanında hem türkçe hem ingilizce isim gösterilmemeli, seçili dile göre gösterilmeli
     - ✅ İşlemler ekranında o işlemi kimin yaptığı belli değil !!
+    - ✅ Proje DRY prensibine uygun değil. Bir component en fazla 350 satır olmalı. Sub Componentlere ayır. Bir de folder structure yapısı belirle. Sayfa bazlı sub componentlere böl. yani
+        views
+            _components
+        gibi. Ama global olanlar da globalde tutulsun. Yani bir component tüm yapılarda ortaksa global pathde tutalım. Örnek almak istersen /Users/denizzeybek/Documents/Flexytime-Fe pathindeki projenin pathine bakabilirsin.
+- [x] Aynı sessiondaki kişiler arasında para transferi yapılabilmeli. Bunu işlemlerde gider, gelir, transfer şeklinde tab olarak göster. raporlara yansımalı aynı zamanda gelir gider tablolarına da yansımalı. Aslında total para değişmiyor ama aynı ev içindeki kişiler bunu ui'a baktığında kolayca anlayabilmeli.
+    - ✅ Backend'de TRANSFER transaction tipi eklendi
+    - ✅ /api/transactions/transfer endpoint'i oluşturuldu
+    - ✅ Transfer işlemi 2 bağlı transaction olarak kaydediliyor (gönderen ve alıcı için)
+    - ✅ İşlem ekle ekranına Transfer tab'ı eklendi
+    - ✅ Kullanıcı seçim modalı ile alıcı seçimi
+    - ✅ İşlemler listesinde transfer icon'u ve yön göstergesi (→ / ←)
+    - ✅ Gelen transferler yeşil, giden transferler turuncu renkte
+    - ✅ Filtreleme seçeneklerine Transfer eklendi
 
 ## Yapılacak
-- [ ] Proje DRY prensibine uygun değil. Bir component en fazla 350 satır olmalı. Sub Componentlere ayır. Bir de folder structure yapısı belirle. Sayfa bazlı sub componentlere böl. yani 
-    views
-        _components
-    gibi. Ama global olanlar da globalde tutulsun. Yani bir component tüm yapılarda ortaksa global pathde tutalım. Örnek almak istersen /Users/denizzeybek/Documents/Flexytime-Fe pathindeki projenin pathine bakabilirsin.
 - [ ] Ana ekrandaki gelir ve giderlerde user bazlı bir kırılıma ihtiyaç var. yani 2 kişi var diyelim. bunlardan biri 4x kazanmış ama 2x harcamış. diğeri de 2x kazanmış ama x harcamış. bunları kırılım olarak göstermeliyiz. Fakat burda eğer bir harcama ortak olarak işaretlendiyse her iki tarafa da yansımalı bunu unutma!
-- [ ] Aynı sessiondaki kişiler arasında para transferi yapılabilmeli. Bunu işlemlerde göstermeliyiz, raporlara yansımalı aynı zamanda gelir gider tablolarına da yansımalı. Aslında total para değişmiyor ama aynı ev içindeki kişiler bunu ui'a baktığında kolayca anlayabilmeli.
 - [ ] Raporlarda datepicker olmalı. Range seçilmeli ve o seçili range içindeki alan göz önünde bulundurulmalı.
     - initial range mevcut ayın ilk ve son gününü kapsamalı
 - [ ] Raporlarda şu an piechart yok? ekle

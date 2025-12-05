@@ -26,9 +26,12 @@ import { router, useFocusEffect } from 'expo-router';
 import { Users, Repeat, CreditCard, ChevronDown } from 'lucide-react-native';
 import { useTransactionsStore, useCategoriesStore, useCreditCardsStore } from '../../store';
 import { CategoryDropdown, AddCategoryModal } from '../../components';
+import { TransferForm } from './_components';
 import type { CreditCard as CreditCardType } from '../../client';
 import { colors } from '../../constants/theme';
-import { TransactionType, CategoryItem } from '../../types';
+import { CategoryItem } from '../../types';
+
+type TabType = 'EXPENSE' | 'INCOME' | 'TRANSFER';
 
 export default function AddTransactionScreen() {
   const { t } = useTranslation();
@@ -36,7 +39,7 @@ export default function AddTransactionScreen() {
   const { categories, fetchCategories, createCategory, isCreating: isCreatingCategory } = useCategoriesStore();
   const { creditCards, fetchCreditCards } = useCreditCardsStore();
 
-  const [type, setType] = useState<TransactionType>('EXPENSE');
+  const [tab, setTab] = useState<TabType>('EXPENSE');
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CategoryItem | null>(null);
@@ -47,7 +50,7 @@ export default function AddTransactionScreen() {
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
 
   const resetForm = useCallback(() => {
-    setType('EXPENSE');
+    setTab('EXPENSE');
     setTitle('');
     setAmount('');
     setSelectedCategory(null);
@@ -66,14 +69,14 @@ export default function AddTransactionScreen() {
 
   useEffect(() => {
     setSelectedCategory(null);
-  }, [type]);
+  }, [tab]);
 
   const handleSubmit = async () => {
-    if (!title || !amount || !selectedCategory) return;
+    if (!amount || !selectedCategory) return;
     try {
       await createTransaction({
-        type,
-        title,
+        type: tab as 'INCOME' | 'EXPENSE',
+        title: title || undefined,
         amount: parseFloat(amount),
         date: new Date().toISOString(),
         categoryId: selectedCategory.id || '',
@@ -110,6 +113,87 @@ export default function AddTransactionScreen() {
     }
   };
 
+  const renderIncomeExpenseForm = () => (
+    <>
+      <CategoryDropdown
+        categories={categories}
+        selectedCategory={selectedCategory}
+        onSelect={setSelectedCategory}
+        onAddNew={() => setShowAddCategoryModal(true)}
+        transactionType={tab as 'INCOME' | 'EXPENSE'}
+      />
+
+      <Input size="xl" variant="outline">
+        <InputSlot pl="$3">
+          <Text size="lg" color="$textLight500">
+            ₺
+          </Text>
+        </InputSlot>
+        <InputField
+          placeholder={t('transactions.amount')}
+          value={amount}
+          onChangeText={setAmount}
+          keyboardType="decimal-pad"
+        />
+      </Input>
+
+      <Input size="xl" variant="outline">
+        <InputField placeholder={t('transactions.description')} value={title} onChangeText={setTitle} />
+      </Input>
+
+      {tab === 'EXPENSE' && (
+        <Pressable onPress={() => setShowCardModal(true)}>
+          <Box
+            borderWidth={1}
+            borderColor="$borderLight300"
+            sx={{ _dark: { borderColor: '$borderDark700' } }}
+            borderRadius="$lg"
+            p="$4"
+          >
+            <HStack justifyContent="space-between" alignItems="center">
+              <HStack space="md" alignItems="center">
+                <CreditCard size={20} color="#A3A3A3" />
+                <Text color={selectedCard ? '$textLight900' : '$textLight500'}>
+                  {selectedCard?.name || t('transactions.assignToCard')}
+                </Text>
+              </HStack>
+              <ChevronDown size={20} color="#A3A3A3" />
+            </HStack>
+          </Box>
+        </Pressable>
+      )}
+
+      {tab === 'EXPENSE' && (
+        <HStack justifyContent="space-between" alignItems="center" py="$2">
+          <HStack space="md" alignItems="center">
+            <Users size={24} color={colors.shared} />
+            <Text size="md">{t('transactions.shared')}</Text>
+          </HStack>
+          <Switch value={isShared} onValueChange={setIsShared} />
+        </HStack>
+      )}
+
+      <HStack justifyContent="space-between" alignItems="center" py="$2">
+        <HStack space="md" alignItems="center">
+          <Repeat size={24} color={colors.primary} />
+          <Text size="md">{t('transactions.recurring')}</Text>
+        </HStack>
+        <Switch value={isRecurring} onValueChange={setIsRecurring} />
+      </HStack>
+
+      {error && (
+        <Text color="$error500" textAlign="center">
+          {error}
+        </Text>
+      )}
+
+      <Button size="xl" onPress={handleSubmit} isDisabled={isCreating || !amount || !selectedCategory} mt="$4">
+        {isCreating && <ButtonSpinner mr="$2" />}
+        <ButtonText>{t('common.save')}</ButtonText>
+      </Button>
+    </>
+  );
+
   return (
     <RNScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
       <Box flex={1} bg="$backgroundLight50" sx={{ _dark: { bg: '$backgroundDark950' } }} p="$4">
@@ -117,103 +201,31 @@ export default function AddTransactionScreen() {
           <ButtonGroup space="sm">
             <Button
               flex={1}
-              variant={type === 'EXPENSE' ? 'solid' : 'outline'}
-              action={type === 'EXPENSE' ? 'negative' : 'secondary'}
-              onPress={() => setType('EXPENSE')}
+              variant={tab === 'EXPENSE' ? 'solid' : 'outline'}
+              action={tab === 'EXPENSE' ? 'negative' : 'secondary'}
+              onPress={() => setTab('EXPENSE')}
             >
               <ButtonText>{t('transactions.expense')}</ButtonText>
             </Button>
             <Button
               flex={1}
-              variant={type === 'INCOME' ? 'solid' : 'outline'}
-              action={type === 'INCOME' ? 'positive' : 'secondary'}
-              onPress={() => setType('INCOME')}
+              variant={tab === 'INCOME' ? 'solid' : 'outline'}
+              action={tab === 'INCOME' ? 'positive' : 'secondary'}
+              onPress={() => setTab('INCOME')}
             >
               <ButtonText>{t('transactions.income')}</ButtonText>
             </Button>
+            <Button
+              flex={1}
+              variant={tab === 'TRANSFER' ? 'solid' : 'outline'}
+              action={tab === 'TRANSFER' ? 'primary' : 'secondary'}
+              onPress={() => setTab('TRANSFER')}
+            >
+              <ButtonText>{t('transactions.transfer')}</ButtonText>
+            </Button>
           </ButtonGroup>
 
-          <CategoryDropdown
-            categories={categories}
-            selectedCategory={selectedCategory}
-            onSelect={setSelectedCategory}
-            onAddNew={() => setShowAddCategoryModal(true)}
-            transactionType={type}
-          />
-
-          <Input size="xl" variant="outline">
-            <InputSlot pl="$3">
-              <Text size="lg" color="$textLight500">
-                ₺
-              </Text>
-            </InputSlot>
-            <InputField
-              placeholder={t('transactions.amount')}
-              value={amount}
-              onChangeText={setAmount}
-              keyboardType="decimal-pad"
-            />
-          </Input>
-
-          <Input size="xl" variant="outline">
-            <InputField placeholder={t('transactions.description')} value={title} onChangeText={setTitle} />
-          </Input>
-
-          {type === 'EXPENSE' && (
-            <Pressable onPress={() => setShowCardModal(true)}>
-              <Box
-                borderWidth={1}
-                borderColor="$borderLight300"
-                sx={{ _dark: { borderColor: '$borderDark700' } }}
-                borderRadius="$lg"
-                p="$4"
-              >
-                <HStack justifyContent="space-between" alignItems="center">
-                  <HStack space="md" alignItems="center">
-                    <CreditCard size={20} color="#A3A3A3" />
-                    <Text color={selectedCard ? '$textLight900' : '$textLight500'}>
-                      {selectedCard?.name || t('transactions.assignToCard')}
-                    </Text>
-                  </HStack>
-                  <ChevronDown size={20} color="#A3A3A3" />
-                </HStack>
-              </Box>
-            </Pressable>
-          )}
-
-          {type === 'EXPENSE' && (
-            <HStack justifyContent="space-between" alignItems="center" py="$2">
-              <HStack space="md" alignItems="center">
-                <Users size={24} color={colors.shared} />
-                <Text size="md">{t('transactions.shared')}</Text>
-              </HStack>
-              <Switch value={isShared} onValueChange={setIsShared} />
-            </HStack>
-          )}
-
-          <HStack justifyContent="space-between" alignItems="center" py="$2">
-            <HStack space="md" alignItems="center">
-              <Repeat size={24} color={colors.primary} />
-              <Text size="md">{t('transactions.recurring')}</Text>
-            </HStack>
-            <Switch value={isRecurring} onValueChange={setIsRecurring} />
-          </HStack>
-
-          {error && (
-            <Text color="$error500" textAlign="center">
-              {error}
-            </Text>
-          )}
-
-          <Button
-            size="xl"
-            onPress={handleSubmit}
-            isDisabled={isCreating || !title || !amount || !selectedCategory}
-            mt="$4"
-          >
-            {isCreating && <ButtonSpinner mr="$2" />}
-            <ButtonText>{t('common.save')}</ButtonText>
-          </Button>
+          {tab === 'TRANSFER' ? <TransferForm /> : renderIncomeExpenseForm()}
         </VStack>
 
         <AddCategoryModal
@@ -221,7 +233,7 @@ export default function AddTransactionScreen() {
           onClose={() => setShowAddCategoryModal(false)}
           onSave={handleSaveNewCategory}
           isLoading={isCreatingCategory}
-          defaultType={type}
+          defaultType={tab as 'INCOME' | 'EXPENSE'}
         />
 
         <Modal isOpen={showCardModal} onClose={() => setShowCardModal(false)}>

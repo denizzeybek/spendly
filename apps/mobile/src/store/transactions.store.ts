@@ -3,7 +3,7 @@ import { TransactionsService } from '../client';
 import type { Transaction } from '../client';
 import type { ApiError } from '../types';
 
-type FilterType = 'all' | 'INCOME' | 'EXPENSE';
+type FilterType = 'all' | 'INCOME' | 'EXPENSE' | 'TRANSFER';
 
 interface TransactionWithCategory extends Omit<Transaction, 'categoryId'> {
   categoryId: {
@@ -28,13 +28,19 @@ interface TransactionsState {
   fetchTransactions: () => Promise<void>;
   createTransaction: (data: {
     type: 'INCOME' | 'EXPENSE';
-    title: string;
+    title?: string;
     amount: number;
     date: string;
     categoryId: string;
     assignedCardId?: string;
     isShared?: boolean;
     isRecurring?: boolean;
+  }) => Promise<void>;
+  createTransfer: (data: {
+    amount: number;
+    date: string;
+    toUserId: string;
+    title?: string;
   }) => Promise<void>;
   updateTransaction: (id: string, data: {
     type?: 'INCOME' | 'EXPENSE';
@@ -86,6 +92,21 @@ export const useTransactionsStore = create<TransactionsState>((set, get) => ({
     } catch (err) {
       const error = err as ApiError;
       const message = error.body?.message || error.message || 'Failed to create transaction';
+      set({ error: message, isCreating: false });
+      throw new Error(message);
+    }
+  },
+
+  createTransfer: async (data) => {
+    set({ isCreating: true, error: null });
+    try {
+      await TransactionsService.postApiTransactionsTransfer(data);
+      set({ isCreating: false });
+      // Refresh transactions list
+      get().fetchTransactions();
+    } catch (err) {
+      const error = err as ApiError;
+      const message = error.body?.message || error.message || 'Failed to create transfer';
       set({ error: message, isCreating: false });
       throw new Error(message);
     }

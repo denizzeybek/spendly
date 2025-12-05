@@ -39,10 +39,11 @@ export default function TransactionsScreen() {
 
   const currency = home?.currency || 'TRY';
 
-  const filterOptions: { key: FilterType; label: string }[] = [
-    { key: 'all', label: t('common.all') },
-    { key: 'INCOME', label: t('transactions.income') },
-    { key: 'EXPENSE', label: t('transactions.expense') },
+  const filterOptions = [
+    { key: 'all' as const, label: t('common.all') },
+    { key: 'INCOME' as const, label: t('transactions.income') },
+    { key: 'EXPENSE' as const, label: t('transactions.expense') },
+    { key: 'TRANSFER' as const, label: t('transactions.transfer') },
   ];
 
   const handleEditPress = (item: TransactionItemType) => {
@@ -138,7 +139,7 @@ export default function TransactionsScreen() {
         }}
         transaction={editingTransaction}
         categories={categories}
-        onSave={handleSaveEdit}
+        onSave={handleSaveEdit as (data: { type: 'INCOME' | 'EXPENSE' | 'TRANSFER'; title: string; amount: number; categoryId?: string; isShared: boolean; isRecurring: boolean; }) => Promise<void>}
         onOpenAddCategory={() => setShowAddCategoryModal(true)}
         isLoading={isUpdating}
       />
@@ -148,7 +149,7 @@ export default function TransactionsScreen() {
         onClose={() => setShowAddCategoryModal(false)}
         onSave={handleSaveNewCategory}
         isLoading={isCreatingCategory}
-        defaultType={editingTransaction?.type || 'EXPENSE'}
+        defaultType={editingTransaction?.type === 'TRANSFER' ? 'EXPENSE' : editingTransaction?.type || 'EXPENSE'}
       />
     </Box>
   );

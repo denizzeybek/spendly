@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { transactionService } from './transaction.service';
 import { sendSuccess, sendPaginated } from '../../utils/response';
-import { CreateTransactionInput, UpdateTransactionInput, ListTransactionsQuery } from './transaction.schema';
+import { CreateTransactionInput, CreateTransferInput, UpdateTransactionInput, ListTransactionsQuery } from './transaction.schema';
 
 export class TransactionController {
   async create(
@@ -75,6 +75,24 @@ export class TransactionController {
     try {
       const result = await transactionService.delete(req.params.id, req.user!.homeId);
       sendSuccess(res, result, 'Transaction deleted');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async createTransfer(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const body = req.body as CreateTransferInput;
+      const result = await transactionService.createTransfer(
+        body,
+        req.user!.userId,
+        req.user!.homeId
+      );
+      sendSuccess(res, result, 'Transfer created', 201);
     } catch (error) {
       next(error);
     }

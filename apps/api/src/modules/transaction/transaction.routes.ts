@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { transactionController } from './transaction.controller';
 import { validate } from '../../middlewares/validate.middleware';
 import { authMiddleware } from '../../middlewares/auth.middleware';
-import { createTransactionSchema, updateTransactionSchema, listTransactionsQuerySchema } from './transaction.schema';
+import { createTransactionSchema, createTransferSchema, updateTransactionSchema, listTransactionsQuerySchema } from './transaction.schema';
 
 const router = Router();
 
@@ -21,7 +21,7 @@ router.use(authMiddleware);
  *         name: type
  *         schema:
  *           type: string
- *           enum: [INCOME, EXPENSE]
+ *           enum: [INCOME, EXPENSE, TRANSFER]
  *       - in: query
  *         name: categoryId
  *         schema:
@@ -68,7 +68,6 @@ router.get('/', validate(listTransactionsQuerySchema, 'query'), transactionContr
  *             type: object
  *             required:
  *               - type
- *               - title
  *               - amount
  *               - date
  *               - categoryId
@@ -98,6 +97,44 @@ router.get('/', validate(listTransactionsQuerySchema, 'query'), transactionContr
  *         description: Transaction created
  */
 router.post('/', validate(createTransactionSchema), transactionController.create.bind(transactionController));
+
+/**
+ * @swagger
+ * /api/transactions/transfer:
+ *   post:
+ *     summary: Create a transfer between users
+ *     tags: [Transactions]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - amount
+ *               - date
+ *               - toUserId
+ *             properties:
+ *               amount:
+ *                 type: number
+ *               date:
+ *                 type: string
+ *                 format: date-time
+ *               toUserId:
+ *                 type: string
+ *               title:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Transfer created
+ *       400:
+ *         description: Cannot transfer to yourself
+ *       404:
+ *         description: Recipient not found
+ */
+router.post('/transfer', validate(createTransferSchema), transactionController.createTransfer.bind(transactionController));
 
 /**
  * @swagger

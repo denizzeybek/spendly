@@ -45,6 +45,7 @@
     "add": "Add Transaction",
     "income": "Income",
     "expense": "Expense",
+    "transfer": "Transfer",
     "amount": "Amount",
     "date": "Date",
     "category": "Category",
@@ -55,7 +56,11 @@
     "noTransactions": "No transactions yet",
     "editTransaction": "Edit Transaction",
     "deleteTitle": "Delete Transaction",
-    "deleteConfirm": "Are you sure you want to delete this transaction?"
+    "deleteConfirm": "Are you sure you want to delete this transaction?",
+    "selectRecipient": "Select Recipient",
+    "transferTo": "Transfer to",
+    "transferFrom": "Transfer from",
+    "cannotTransferToSelf": "You cannot transfer to yourself"
   },
   "categories": {
     "title": "Categories",

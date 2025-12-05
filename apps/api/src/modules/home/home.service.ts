@@ -76,7 +76,7 @@ export class HomeService {
 
         // Aggregate transactions for this user
         const [incomeAgg, personalExpenseAgg, mySharedExpenseAgg, allSharedExpenseAgg, creditCardAgg] = await Promise.all([
-          // Total income created by this user
+          // Total income created by this user (excluding transfers)
           Transaction.aggregate([
             {
               $match: {

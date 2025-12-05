@@ -1,9 +1,10 @@
 import { Box, VStack, HStack, Text, Badge, BadgeText, Pressable } from '@gluestack-ui/themed';
 import { useTranslation } from 'react-i18next';
-import { Trash2 } from 'lucide-react-native';
+import { Trash2, ArrowRightLeft } from 'lucide-react-native';
 import { formatCurrency } from '../../../utils';
 import { colors } from '../../../constants/theme';
 import { TransactionItem as TransactionItemType } from '../../../types';
+import { useAuthStore } from '../../../store';
 
 interface TransactionItemProps {
   item: TransactionItemType;
@@ -14,10 +15,39 @@ interface TransactionItemProps {
 
 export function TransactionItem({ item, currency, onPress, onDelete }: TransactionItemProps) {
   const { t } = useTranslation();
+  const currentUser = useAuthStore((state) => state.user);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' });
+  };
+
+  const isTransfer = item.type === 'TRANSFER';
+  const isOutgoingTransfer = isTransfer && item.fromUserId?._id === currentUser?.id;
+  const isIncomingTransfer = isTransfer && item.toUserId?._id === currentUser?.id;
+
+  const getTransferLabel = () => {
+    if (isOutgoingTransfer) {
+      return `→ ${item.toUserId?.name || ''}`;
+    }
+    if (isIncomingTransfer) {
+      return `← ${item.fromUserId?.name || ''}`;
+    }
+    return '';
+  };
+
+  const getAmountColor = () => {
+    if (isTransfer) {
+      return isIncomingTransfer ? '$success500' : '$warning500';
+    }
+    return item.type === 'INCOME' ? '$success500' : '$error500';
+  };
+
+  const getAmountPrefix = () => {
+    if (isTransfer) {
+      return isIncomingTransfer ? '+' : '-';
+    }
+    return item.type === 'INCOME' ? '+' : '-';
   };
 
   return (
@@ -31,20 +61,29 @@ export function TransactionItem({ item, currency, onPress, onDelete }: Transacti
               borderRadius="$full"
               justifyContent="center"
               alignItems="center"
-              bg={`${item.categoryId?.color}20`}
+              bg={isTransfer ? '#6366F120' : `${item.categoryId?.color}20`}
             >
-              <Text size="xl">{item.categoryId?.icon || '💰'}</Text>
+              {isTransfer ? (
+                <ArrowRightLeft size={24} color="#6366F1" />
+              ) : (
+                <Text size="xl">{item.categoryId?.icon || '💰'}</Text>
+              )}
             </Box>
             <VStack flex={1} space="xs">
               <Text size="md" fontWeight="$medium" numberOfLines={1} flex={1}>
-                {item.categoryId?.name || '-'}
+                {isTransfer ? t('transactions.transfer') : item.categoryId?.name || '-'}
               </Text>
+              {isTransfer && (
+                <Text size="xs" color="$primary500" numberOfLines={1}>
+                  {getTransferLabel()}
+                </Text>
+              )}
               {item.title && (
                 <Text size="xs" color="$textLight500" numberOfLines={1} sx={{ _dark: { color: '$textDark400' } }}>
                   {item.title}
                 </Text>
               )}
-              {item.isShared && (
+              {item.isShared && !isTransfer && (
                 <Badge size="sm" variant="outline" action="warning" style={{ alignSelf: 'flex-start', flexShrink: 1 }}>
                   <BadgeText size="2xs">{t('transactions.shared')}</BadgeText>
                 </Badge>
@@ -55,8 +94,8 @@ export function TransactionItem({ item, currency, onPress, onDelete }: Transacti
             </VStack>
           </HStack>
           <HStack space="md" alignItems="center">
-            <Text size="lg" fontWeight="$bold" color={item.type === 'INCOME' ? '$success500' : '$error500'}>
-              {item.type === 'INCOME' ? '+' : '-'}
+            <Text size="lg" fontWeight="$bold" color={getAmountColor()}>
+              {getAmountPrefix()}
               {formatCurrency(item.amount || 0, currency)}
             </Text>
             <Pressable

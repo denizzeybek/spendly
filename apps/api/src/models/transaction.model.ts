@@ -14,6 +14,10 @@ export interface ITransactionDocument extends Document {
   recurringDay?: number;
   createdById: mongoose.Types.ObjectId;
   homeId: mongoose.Types.ObjectId;
+  // Transfer specific fields
+  fromUserId?: mongoose.Types.ObjectId;
+  toUserId?: mongoose.Types.ObjectId;
+  linkedTransactionId?: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -23,11 +27,11 @@ const transactionSchema = new Schema<ITransactionDocument>(
     type: {
       type: String,
       required: true,
-      enum: ['INCOME', 'EXPENSE'],
+      enum: ['INCOME', 'EXPENSE', 'TRANSFER'],
     },
     title: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
     },
     amount: {
@@ -72,6 +76,22 @@ const transactionSchema = new Schema<ITransactionDocument>(
       type: Schema.Types.ObjectId,
       ref: 'Home',
       required: true,
+    },
+    // Transfer specific fields
+    fromUserId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
+    toUserId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
+    linkedTransactionId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Transaction',
+      default: null,
     },
   },
   {

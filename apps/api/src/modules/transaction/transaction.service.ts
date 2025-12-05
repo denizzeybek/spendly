@@ -1,6 +1,6 @@
-import { Transaction, Category } from '../../models';
+import { Transaction, Category, User } from '../../models';
 import { AppError } from '../../middlewares/error.middleware';
-import { CreateTransactionInput, UpdateTransactionInput, ListTransactionsQuery } from './transaction.schema';
+import { CreateTransactionInput, CreateTransferInput, UpdateTransactionInput, ListTransactionsQuery } from './transaction.schema';
 import mongoose from 'mongoose';
 
 export class TransactionService {
@@ -55,6 +55,8 @@ export class TransactionService {
         .populate('categoryId', 'name icon color type')
         .populate('createdById', 'name')
         .populate('assignedCardId', 'name')
+        .populate('fromUserId', 'name')
+        .populate('toUserId', 'name')
         .sort({ date: -1 })
         .skip(skip)
         .limit(limit),
@@ -117,7 +119,7 @@ export class TransactionService {
   }
 
   async delete(id: string, homeId: string) {
-    const transaction = await Transaction.findOneAndDelete({
+    const transaction = await Transaction.findOne({
       _id: id,
       homeId: new mongoose.Types.ObjectId(homeId),
     });
@@ -126,7 +128,97 @@ export class TransactionService {
       throw new AppError('Transaction not found', 404);
     }
 
+    // If this is a transfer, also delete the linked transaction
+    if (transaction.type === 'TRANSFER' && transaction.linkedTransactionId) {
+      await Transaction.findByIdAndDelete(transaction.linkedTransactionId);
+    }
+
+    await Transaction.findByIdAndDelete(id);
+
     return { id };
+  }
+
+  async createTransfer(input: CreateTransferInput, fromUserId: string, homeId: string) {
+    const homeObjectId = new mongoose.Types.ObjectId(homeId);
+    const fromUserObjectId = new mongoose.Types.ObjectId(fromUserId);
+    const toUserObjectId = new mongoose.Types.ObjectId(input.toUserId);
+
+    // Verify toUser exists and belongs to same home
+    const toUser = await User.findOne({
+      _id: toUserObjectId,
+      homeId: homeObjectId,
+    });
+    if (!toUser) {
+      throw new AppError('Recipient not found in your home', 404);
+    }
+
+    // Cannot transfer to yourself
+    if (fromUserId === input.toUserId) {
+      throw new AppError('Cannot transfer to yourself', 400);
+    }
+
+    // Get fromUser for title
+    const fromUser = await User.findById(fromUserObjectId);
+    if (!fromUser) {
+      throw new AppError('User not found', 404);
+    }
+
+    // Find or create a "Transfer" category
+    let transferCategory = await Category.findOne({
+      homeId: homeObjectId,
+      name: 'Transfer',
+    });
+
+    if (!transferCategory) {
+      transferCategory = await Category.create({
+        name: 'Transfer',
+        icon: '💸',
+        color: '#6366F1',
+        type: 'BOTH',
+        isDefault: true,
+        homeId: homeObjectId,
+      });
+    }
+
+    const title = input.title || `Transfer`;
+
+    // Create outgoing transaction (from sender's perspective)
+    const outgoingTransaction = await Transaction.create({
+      type: 'TRANSFER',
+      title,
+      amount: input.amount,
+      date: input.date,
+      categoryId: transferCategory._id,
+      createdById: fromUserObjectId,
+      homeId: homeObjectId,
+      fromUserId: fromUserObjectId,
+      toUserId: toUserObjectId,
+      isShared: false,
+      isRecurring: false,
+    });
+
+    // Create incoming transaction (from receiver's perspective)
+    const incomingTransaction = await Transaction.create({
+      type: 'TRANSFER',
+      title,
+      amount: input.amount,
+      date: input.date,
+      categoryId: transferCategory._id,
+      createdById: toUserObjectId,
+      homeId: homeObjectId,
+      fromUserId: fromUserObjectId,
+      toUserId: toUserObjectId,
+      linkedTransactionId: outgoingTransaction._id,
+      isShared: false,
+      isRecurring: false,
+    });
+
+    // Link the outgoing transaction to incoming
+    await Transaction.findByIdAndUpdate(outgoingTransaction._id, {
+      linkedTransactionId: incomingTransaction._id,
+    });
+
+    return outgoingTransaction.toJSON();
   }
 }
 

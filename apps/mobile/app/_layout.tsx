@@ -27,7 +27,6 @@ export default function RootLayout() {
           contentStyle: { backgroundColor: bgColor },
           headerStyle: { backgroundColor: headerBgColor },
           headerTintColor: headerTextColor,
-          headerBackTitleVisible: true,
         }}
       >
         <Stack.Screen name="index" />

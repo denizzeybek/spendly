@@ -1,8 +1,8 @@
 // Common types used across the app
 
-export type TransactionType = 'INCOME' | 'EXPENSE';
+export type TransactionType = 'INCOME' | 'EXPENSE' | 'TRANSFER';
 export type CategoryType = 'INCOME' | 'EXPENSE' | 'BOTH';
-export type FilterType = 'all' | 'INCOME' | 'EXPENSE';
+export type FilterType = 'all' | 'INCOME' | 'EXPENSE' | 'TRANSFER';
 
 export interface CategoryItem {
   id?: string;
@@ -28,6 +28,15 @@ export interface TransactionItem {
     color?: string;
   };
   createdById?: {
+    _id?: string;
+    name?: string;
+  };
+  // Transfer specific fields
+  fromUserId?: {
+    _id?: string;
+    name?: string;
+  };
+  toUserId?: {
     _id?: string;
     name?: string;
   };

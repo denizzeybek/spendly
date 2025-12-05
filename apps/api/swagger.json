@@ -1346,7 +1346,8 @@
               "type": "string",
               "enum": [
                 "INCOME",
-                "EXPENSE"
+                "EXPENSE",
+                "TRANSFER"
               ]
             }
           },
@@ -1414,7 +1415,6 @@
                 "type": "object",
                 "required": [
                   "type",
-                  "title",
                   "amount",
                   "date",
                   "categoryId"
@@ -1460,6 +1460,60 @@
         "responses": {
           "201": {
             "description": "Transaction created"
+          }
+        }
+      }
+    },
+    "/api/transactions/transfer": {
+      "post": {
+        "summary": "Create a transfer between users",
+        "tags": [
+          "Transactions"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "amount",
+                  "date",
+                  "toUserId"
+                ],
+                "properties": {
+                  "amount": {
+                    "type": "number"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "toUserId": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Transfer created"
+          },
+          "400": {
+            "description": "Cannot transfer to yourself"
+          },
+          "404": {
+            "description": "Recipient not found"
           }
         }
       }

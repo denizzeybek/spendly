@@ -45,6 +45,7 @@
     "add": "İşlem Ekle",
     "income": "Gelir",
     "expense": "Gider",
+    "transfer": "Transfer",
     "amount": "Tutar",
     "date": "Tarih",
     "category": "Kategori",
@@ -55,7 +56,11 @@
     "noTransactions": "Henüz işlem yok",
     "editTransaction": "İşlemi Düzenle",
     "deleteTitle": "İşlemi Sil",
-    "deleteConfirm": "Bu işlemi silmek istediğinizden emin misiniz?"
+    "deleteConfirm": "Bu işlemi silmek istediğinizden emin misiniz?",
+    "selectRecipient": "Alıcı Seç",
+    "transferTo": "Alıcı",
+    "transferFrom": "Gönderen",
+    "cannotTransferToSelf": "Kendinize transfer yapamazsınız"
   },
   "categories": {
     "title": "Kategoriler",
