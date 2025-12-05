@@ -26,7 +26,7 @@ interface CategoriesState {
 
   // Actions
   fetchCategories: (type?: 'INCOME' | 'EXPENSE' | 'BOTH') => Promise<void>;
-  createCategory: (input: CreateCategoryInput) => Promise<void>;
+  createCategory: (input: CreateCategoryInput) => Promise<Category | undefined>;
   updateCategory: (id: string, input: UpdateCategoryInput) => Promise<void>;
   deleteCategory: (id: string) => Promise<void>;
   clearError: () => void;
@@ -54,10 +54,11 @@ export const useCategoriesStore = create<CategoriesState>((set, get) => ({
   createCategory: async (input) => {
     set({ isCreating: true, error: null });
     try {
-      await CategoriesService.postApiCategories(input);
+      const response = await CategoriesService.postApiCategories(input);
       // Refresh categories list
       await get().fetchCategories();
       set({ isCreating: false });
+      return response.data;
     } catch (err) {
       const error = err as ApiError;
       const message = error.body?.message || error.message || 'Failed to create category';

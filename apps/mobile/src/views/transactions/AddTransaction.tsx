@@ -94,8 +94,17 @@ export default function AddTransactionScreen() {
     type: 'INCOME' | 'EXPENSE' | 'BOTH';
   }) => {
     try {
-      await createCategory(category);
+      const newCategory = await createCategory(category);
       setShowAddCategoryModal(false);
+      if (newCategory) {
+        setSelectedCategory({
+          id: newCategory.id,
+          name: newCategory.name,
+          icon: newCategory.icon,
+          color: newCategory.color,
+          type: newCategory.type,
+        });
+      }
     } catch {
       // Error handled in store
     }
