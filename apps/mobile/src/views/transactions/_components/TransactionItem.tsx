@@ -37,8 +37,13 @@ export function TransactionItem({ item, currency, onPress, onDelete }: Transacti
             </Box>
             <VStack flex={1} space="xs">
               <Text size="md" fontWeight="$medium" numberOfLines={1} flex={1}>
-                {item.title}
+                {item.categoryId?.name || '-'}
               </Text>
+              {item.title && (
+                <Text size="xs" color="$textLight500" numberOfLines={1} sx={{ _dark: { color: '$textDark400' } }}>
+                  {item.title}
+                </Text>
+              )}
               {item.isShared && (
                 <Badge size="sm" variant="outline" action="warning" style={{ alignSelf: 'flex-start', flexShrink: 1 }}>
                   <BadgeText size="2xs">{t('transactions.shared')}</BadgeText>
