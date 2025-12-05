@@ -22,18 +22,13 @@ import {
 } from '@gluestack-ui/themed';
 import { useTranslation } from 'react-i18next';
 import { Check } from 'lucide-react-native';
-import { PRESET_COLORS, PRESET_ICONS, DEFAULT_EXPENSE_ICON, DEFAULT_INCOME_ICON } from '../../constants/presets';
-import { CategoryType, TransactionType } from '../../types';
+import { PRESET_COLORS, PRESET_ICONS, DEFAULT_EXPENSE_ICON, DEFAULT_INCOME_ICON } from '../constants/presets';
+import { CategoryType, TransactionType } from '../types';
 
 interface AddCategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (category: {
-    name: string;
-    icon: string;
-    color: string;
-    type: CategoryType;
-  }) => Promise<void>;
+  onSave: (category: { name: string; icon: string; color: string; type: CategoryType }) => Promise<void>;
   isLoading?: boolean;
   defaultType?: TransactionType;
 }
@@ -53,13 +48,7 @@ export function AddCategoryModal({
 
   const handleSave = async () => {
     if (!name.trim()) return;
-    await onSave({
-      name: name.trim(),
-      icon,
-      color,
-      type,
-    });
-    // Reset form
+    await onSave({ name: name.trim(), icon, color, type });
     setName('');
     setType(defaultType);
     setColor(PRESET_COLORS[0]);
@@ -84,9 +73,10 @@ export function AddCategoryModal({
         <ModalBody>
           <ScrollView style={{ maxHeight: 400 }}>
             <VStack space="md">
-              {/* Category Type */}
               <VStack space="xs">
-                <Text size="sm" color="$textLight500">{t('categories.type')}</Text>
+                <Text size="sm" color="$textLight500">
+                  {t('categories.type')}
+                </Text>
                 <ButtonGroup space="sm">
                   <Button
                     flex={1}
@@ -117,21 +107,19 @@ export function AddCategoryModal({
                 </ButtonGroup>
               </VStack>
 
-              {/* Category Name */}
               <VStack space="xs">
-                <Text size="sm" color="$textLight500">{t('categories.name')}</Text>
+                <Text size="sm" color="$textLight500">
+                  {t('categories.name')}
+                </Text>
                 <Input size="lg" variant="outline">
-                  <InputField
-                    placeholder={t('categories.namePlaceholder')}
-                    value={name}
-                    onChangeText={setName}
-                  />
+                  <InputField placeholder={t('categories.namePlaceholder')} value={name} onChangeText={setName} />
                 </Input>
               </VStack>
 
-              {/* Icon Selection */}
               <VStack space="xs">
-                <Text size="sm" color="$textLight500">{t('categories.icon')}</Text>
+                <Text size="sm" color="$textLight500">
+                  {t('categories.icon')}
+                </Text>
                 <HStack flexWrap="wrap">
                   {PRESET_ICONS.map((presetIcon) => (
                     <Pressable
@@ -150,9 +138,10 @@ export function AddCategoryModal({
                 </HStack>
               </VStack>
 
-              {/* Color Selection */}
               <VStack space="xs">
-                <Text size="sm" color="$textLight500">{t('categories.color')}</Text>
+                <Text size="sm" color="$textLight500">
+                  {t('categories.color')}
+                </Text>
                 <HStack flexWrap="wrap">
                   {PRESET_COLORS.map((presetColor) => (
                     <Pressable
@@ -168,23 +157,17 @@ export function AddCategoryModal({
                       borderWidth={color === presetColor ? 3 : 0}
                       borderColor="$white"
                     >
-                      {color === presetColor && (
-                        <Check size={16} color="#ffffff" />
-                      )}
+                      {color === presetColor && <Check size={16} color="#ffffff" />}
                     </Pressable>
                   ))}
                 </HStack>
               </VStack>
 
-              {/* Preview */}
               <VStack space="xs">
-                <Text size="sm" color="$textLight500">{t('categories.preview')}</Text>
-                <Box
-                  bg="$backgroundLight100"
-                  sx={{ _dark: { bg: '$backgroundDark800' } }}
-                  p="$3"
-                  borderRadius="$lg"
-                >
+                <Text size="sm" color="$textLight500">
+                  {t('categories.preview')}
+                </Text>
+                <Box bg="$backgroundLight100" sx={{ _dark: { bg: '$backgroundDark800' } }} p="$3" borderRadius="$lg">
                   <HStack space="md" alignItems="center">
                     <Box
                       w="$10"
@@ -207,19 +190,10 @@ export function AddCategoryModal({
         </ModalBody>
         <ModalFooter>
           <ButtonGroup space="md" flex={1}>
-            <Button
-              flex={1}
-              variant="outline"
-              action="secondary"
-              onPress={handleClose}
-            >
+            <Button flex={1} variant="outline" action="secondary" onPress={handleClose}>
               <ButtonText>{t('common.cancel')}</ButtonText>
             </Button>
-            <Button
-              flex={1}
-              onPress={handleSave}
-              isDisabled={isLoading || !name.trim()}
-            >
+            <Button flex={1} onPress={handleSave} isDisabled={isLoading || !name.trim()}>
               {isLoading && <ButtonSpinner mr="$2" />}
               <ButtonText>{t('common.save')}</ButtonText>
             </Button>

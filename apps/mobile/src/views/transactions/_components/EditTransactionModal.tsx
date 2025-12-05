@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import {
-  Box,
   VStack,
   HStack,
   Text,
@@ -21,8 +20,8 @@ import {
   Switch,
 } from '@gluestack-ui/themed';
 import { useTranslation } from 'react-i18next';
-import { CategoryDropdown } from '../global/CategoryDropdown';
-import { TransactionItem, TransactionType, CategoryItem } from '../../types';
+import { CategoryDropdown } from '../../../components';
+import { TransactionItem, TransactionType, CategoryItem } from '../../../types';
 
 interface EditTransactionModalProps {
   isOpen: boolean;
@@ -58,7 +57,6 @@ export function EditTransactionModal({
   const [isRecurring, setIsRecurring] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<CategoryItem | null>(null);
 
-  // Reset form when transaction changes
   useEffect(() => {
     if (transaction) {
       setType(transaction.type || 'EXPENSE');
@@ -66,14 +64,11 @@ export function EditTransactionModal({
       setAmount(String(transaction.amount || ''));
       setIsShared(transaction.isShared || false);
       setIsRecurring(transaction.isRecurring || false);
-
-      // Find matching category
       const matchingCategory = categories.find((c) => c.id === transaction.categoryId?._id);
       setSelectedCategory(matchingCategory || null);
     }
   }, [transaction, categories]);
 
-  // Reset category when type changes
   useEffect(() => {
     if (selectedCategory) {
       const categoryType = selectedCategory.type;
@@ -114,7 +109,6 @@ export function EditTransactionModal({
         </ModalHeader>
         <ModalBody>
           <VStack space="md">
-            {/* Type Selector */}
             <ButtonGroup space="sm">
               <Button
                 flex={1}
@@ -134,19 +128,15 @@ export function EditTransactionModal({
               </Button>
             </ButtonGroup>
 
-            {/* Title */}
             <Input size="lg" variant="outline">
-              <InputField
-                placeholder={t('transactions.description')}
-                value={title}
-                onChangeText={setTitle}
-              />
+              <InputField placeholder={t('transactions.description')} value={title} onChangeText={setTitle} />
             </Input>
 
-            {/* Amount */}
             <Input size="lg" variant="outline">
               <InputSlot pl="$3">
-                <Text size="lg" color="$textLight500">₺</Text>
+                <Text size="lg" color="$textLight500">
+                  ₺
+                </Text>
               </InputSlot>
               <InputField
                 placeholder={t('transactions.amount')}
@@ -156,7 +146,6 @@ export function EditTransactionModal({
               />
             </Input>
 
-            {/* Category Selector */}
             <CategoryDropdown
               categories={categories}
               selectedCategory={selectedCategory}
@@ -165,7 +154,6 @@ export function EditTransactionModal({
               transactionType={type}
             />
 
-            {/* Shared Switch (Expense only) */}
             {type === 'EXPENSE' && (
               <HStack justifyContent="space-between" alignItems="center">
                 <Text size="md">{t('transactions.shared')}</Text>
@@ -173,7 +161,6 @@ export function EditTransactionModal({
               </HStack>
             )}
 
-            {/* Recurring Switch (Both Income and Expense) */}
             <HStack justifyContent="space-between" alignItems="center">
               <Text size="md">{t('transactions.recurring')}</Text>
               <Switch value={isRecurring} onValueChange={setIsRecurring} />
@@ -182,19 +169,10 @@ export function EditTransactionModal({
         </ModalBody>
         <ModalFooter>
           <ButtonGroup space="md" flex={1}>
-            <Button
-              flex={1}
-              variant="outline"
-              action="secondary"
-              onPress={handleClose}
-            >
+            <Button flex={1} variant="outline" action="secondary" onPress={handleClose}>
               <ButtonText>{t('common.cancel')}</ButtonText>
             </Button>
-            <Button
-              flex={1}
-              onPress={handleSave}
-              isDisabled={isLoading || !title || !amount}
-            >
+            <Button flex={1} onPress={handleSave} isDisabled={isLoading || !title || !amount}>
               {isLoading && <ButtonSpinner mr="$2" />}
               <ButtonText>{t('common.save')}</ButtonText>
             </Button>

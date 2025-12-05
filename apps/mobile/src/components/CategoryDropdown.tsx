@@ -1,16 +1,10 @@
 import { useRef, useState, useEffect } from 'react';
 import { Animated, ScrollView as RNScrollView } from 'react-native';
-import {
-  Box,
-  HStack,
-  Text,
-  Pressable,
-  Divider,
-} from '@gluestack-ui/themed';
+import { Box, HStack, Text, Pressable, Divider } from '@gluestack-ui/themed';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronUp, Check, Plus } from 'lucide-react-native';
-import { colors } from '../../constants/theme';
-import { CategoryItem, TransactionType } from '../../types';
+import { colors } from '../constants/theme';
+import { CategoryItem, TransactionType } from '../types';
 
 interface CategoryDropdownProps {
   categories: CategoryItem[];
@@ -33,27 +27,17 @@ export function CategoryDropdown({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownAnimation = useRef(new Animated.Value(0)).current;
 
-  const filteredCategories = categories.filter(
-    (cat) => cat.type === transactionType || cat.type === 'BOTH'
-  );
+  const filteredCategories = categories.filter((cat) => cat.type === transactionType || cat.type === 'BOTH');
 
   const toggle = () => {
     const toValue = isOpen ? 0 : 1;
     setIsOpen(!isOpen);
-    Animated.timing(dropdownAnimation, {
-      toValue,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
+    Animated.timing(dropdownAnimation, { toValue, duration: 200, useNativeDriver: false }).start();
   };
 
   const close = () => {
     setIsOpen(false);
-    Animated.timing(dropdownAnimation, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
+    Animated.timing(dropdownAnimation, { toValue: 0, duration: 200, useNativeDriver: false }).start();
   };
 
   const handleSelect = (cat: CategoryItem) => {
@@ -66,12 +50,8 @@ export function CategoryDropdown({
     onAddNew?.();
   };
 
-  const dropdownMaxHeight = dropdownAnimation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 200],
-  });
+  const dropdownMaxHeight = dropdownAnimation.interpolate({ inputRange: [0, 1], outputRange: [0, 200] });
 
-  // Close dropdown when transaction type changes
   useEffect(() => {
     close();
   }, [transactionType]);
@@ -110,16 +90,11 @@ export function CategoryDropdown({
                 {selectedCategory?.name || placeholder || t('transactions.category')}
               </Text>
             </HStack>
-            {isOpen ? (
-              <ChevronUp size={20} color={colors.primary} />
-            ) : (
-              <ChevronDown size={20} color="#A3A3A3" />
-            )}
+            {isOpen ? <ChevronUp size={20} color={colors.primary} /> : <ChevronDown size={20} color="#A3A3A3" />}
           </HStack>
         </Box>
       </Pressable>
 
-      {/* Dropdown Content */}
       <Animated.View
         style={{
           maxHeight: dropdownMaxHeight,
@@ -131,11 +106,7 @@ export function CategoryDropdown({
           borderBottomRightRadius: 8,
         }}
       >
-        <Box
-          bg="$backgroundLight0"
-          sx={{ _dark: { bg: '$backgroundDark900' } }}
-        >
-          {/* Add New Category - Fixed at top */}
+        <Box bg="$backgroundLight0" sx={{ _dark: { bg: '$backgroundDark900' } }}>
           {onAddNew && (
             <>
               <Pressable
@@ -165,7 +136,6 @@ export function CategoryDropdown({
             </>
           )}
 
-          {/* Category List */}
           <RNScrollView style={{ maxHeight: 150 }} nestedScrollEnabled>
             {filteredCategories.length === 0 ? (
               <Box py="$4" px="$4">

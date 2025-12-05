@@ -9,12 +9,7 @@ interface EmptyStateProps {
   iconColor?: string;
 }
 
-export function EmptyState({
-  icon: Icon,
-  message,
-  iconSize = 64,
-  iconColor = '#A3A3A3',
-}: EmptyStateProps) {
+export function EmptyState({ icon: Icon, message, iconSize = 64, iconColor = '#A3A3A3' }: EmptyStateProps) {
   return (
     <Box flex={1} justifyContent="center" alignItems="center">
       <Icon size={iconSize} color={iconColor} />

@@ -29,6 +29,7 @@ export interface UserSummariesResponse {
   month: number;
   year: number;
   users: UserSummary[];
+  totalSharedExpense: number;
 }
 
 export interface CreditCard {

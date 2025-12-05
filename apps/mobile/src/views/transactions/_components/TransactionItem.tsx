@@ -1,17 +1,9 @@
-import {
-  Box,
-  VStack,
-  HStack,
-  Text,
-  Badge,
-  BadgeText,
-  Pressable,
-} from '@gluestack-ui/themed';
+import { Box, VStack, HStack, Text, Badge, BadgeText, Pressable } from '@gluestack-ui/themed';
 import { useTranslation } from 'react-i18next';
 import { Trash2 } from 'lucide-react-native';
-import { formatCurrency } from '../../utils';
-import { colors } from '../../constants/theme';
-import { TransactionItem as TransactionItemType } from '../../types';
+import { formatCurrency } from '../../../utils';
+import { colors } from '../../../constants/theme';
+import { TransactionItem as TransactionItemType } from '../../../types';
 
 interface TransactionItemProps {
   item: TransactionItemType;
@@ -20,31 +12,17 @@ interface TransactionItemProps {
   onDelete: (item: TransactionItemType) => void;
 }
 
-export function TransactionItem({
-  item,
-  currency,
-  onPress,
-  onDelete,
-}: TransactionItemProps) {
+export function TransactionItem({ item, currency, onPress, onDelete }: TransactionItemProps) {
   const { t } = useTranslation();
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('tr-TR', {
-      day: 'numeric',
-      month: 'short',
-    });
+    return date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' });
   };
 
   return (
     <Pressable onPress={() => onPress(item)}>
-      <Box
-        bg="$backgroundLight0"
-        sx={{ _dark: { bg: '$backgroundDark900' } }}
-        p="$4"
-        borderRadius="$xl"
-        mb="$2"
-      >
+      <Box bg="$backgroundLight0" sx={{ _dark: { bg: '$backgroundDark900' } }} p="$4" borderRadius="$xl" mb="$2">
         <HStack justifyContent="space-between" alignItems="center">
           <HStack space="md" alignItems="center" flex={1}>
             <Box
@@ -62,12 +40,7 @@ export function TransactionItem({
                 {item.title}
               </Text>
               {item.isShared && (
-                <Badge
-                  size="sm"
-                  variant="outline"
-                  action="warning"
-                  style={{ alignSelf: 'flex-start', flexShrink: 1 }}
-                >
+                <Badge size="sm" variant="outline" action="warning" style={{ alignSelf: 'flex-start', flexShrink: 1 }}>
                   <BadgeText size="2xs">{t('transactions.shared')}</BadgeText>
                 </Badge>
               )}
@@ -77,11 +50,7 @@ export function TransactionItem({
             </VStack>
           </HStack>
           <HStack space="md" alignItems="center">
-            <Text
-              size="lg"
-              fontWeight="$bold"
-              color={item.type === 'INCOME' ? '$success500' : '$error500'}
-            >
+            <Text size="lg" fontWeight="$bold" color={item.type === 'INCOME' ? '$success500' : '$error500'}>
               {item.type === 'INCOME' ? '+' : '-'}
               {formatCurrency(item.amount || 0, currency)}
             </Text>

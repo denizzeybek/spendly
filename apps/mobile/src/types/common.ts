@@ -22,13 +22,13 @@ export interface TransactionItem {
   isShared?: boolean;
   isRecurring?: boolean;
   categoryId?: {
-    _id: string;
-    name: string;
-    icon: string;
-    color: string;
+    _id?: string;
+    name?: string;
+    icon?: string;
+    color?: string;
   };
   createdById?: {
-    _id: string;
-    name: string;
+    _id?: string;
+    name?: string;
   };
 }

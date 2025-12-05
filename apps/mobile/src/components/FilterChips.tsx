@@ -11,11 +11,7 @@ interface FilterChipsProps<T extends string> {
   onSelect: (key: T) => void;
 }
 
-export function FilterChips<T extends string>({
-  options,
-  selected,
-  onSelect,
-}: FilterChipsProps<T>) {
+export function FilterChips<T extends string>({ options, selected, onSelect }: FilterChipsProps<T>) {
   return (
     <HStack space="sm">
       {options.map((option) => (
@@ -23,9 +19,7 @@ export function FilterChips<T extends string>({
           key={option.key}
           onPress={() => onSelect(option.key)}
           bg={selected === option.key ? '$primary500' : '$backgroundLight100'}
-          sx={{
-            _dark: { bg: selected === option.key ? '$primary500' : '$backgroundDark800' },
-          }}
+          sx={{ _dark: { bg: selected === option.key ? '$primary500' : '$backgroundDark800' } }}
           px="$4"
           py="$2"
           borderRadius="$full"
