@@ -53,8 +53,9 @@ export function CategoryDropdown({
   const dropdownMaxHeight = dropdownAnimation.interpolate({ inputRange: [0, 1], outputRange: [0, 200] });
 
   useEffect(() => {
-    close();
-  }, [transactionType]);
+    setIsOpen(false);
+    Animated.timing(dropdownAnimation, { toValue: 0, duration: 200, useNativeDriver: false }).start();
+  }, [transactionType, dropdownAnimation]);
 
   return (
     <Box>

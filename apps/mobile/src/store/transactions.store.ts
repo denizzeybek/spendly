@@ -94,7 +94,7 @@ export const useTransactionsStore = create<TransactionsState>((set, get) => ({
   updateTransaction: async (id, data) => {
     set({ isUpdating: true, error: null });
     try {
-      await TransactionsService.patchApiTransactions(id, data);
+      await TransactionsService.patchApiTransactions(id, data as Transaction);
       set({ isUpdating: false });
       // Refresh transactions list
       get().fetchTransactions();
