@@ -54,4 +54,8 @@
 - [ ] Maaşa brüt net hesaplama özelliği eklememiz lazım
     - onun için bir api service bulmamız lazım context 7 ile, bulamazsak custom backend'e kendimiz eklemeliyiz
 - [ ] Aslında delete ve edit işlemleri icon olarak değil de sağa sola sürüklediğimizde gözükmeli. Sola sürüklersek delete çıkmalı, sağa sürüklersek edit çıkmalı.
+- [ ] İlaç vitamin su iç hatırlatma
+- [ ] Frekans ekleme ekle uyku modülü -> Brain.fm
+- [ ] Kredi kartı son ödeme hatırlatıcı ekle
+
 
