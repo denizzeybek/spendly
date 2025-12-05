@@ -23,29 +23,55 @@ export class TransactionService {
     return transaction.toJSON();
   }
 
-  async list(query: ListTransactionsQuery, homeId: string) {
+  async list(query: ListTransactionsQuery, homeId: string, userId: string) {
     const { type, categoryId, month, year, page, limit } = query;
+    const homeObjectId = new mongoose.Types.ObjectId(homeId);
+    const userObjectId = new mongoose.Types.ObjectId(userId);
 
-    const filter: Record<string, unknown> = {
-      homeId: new mongoose.Types.ObjectId(homeId),
+    // Build base filter
+    const baseFilter: Record<string, unknown> = {
+      homeId: homeObjectId,
     };
 
-    if (type) {
-      filter.type = type;
-    }
-
     if (categoryId) {
-      filter.categoryId = new mongoose.Types.ObjectId(categoryId);
+      baseFilter.categoryId = new mongoose.Types.ObjectId(categoryId);
     }
 
     if (month && year) {
       const startDate = new Date(year, month - 1, 1);
       const endDate = new Date(year, month, 0, 23, 59, 59, 999);
-      filter.date = { $gte: startDate, $lte: endDate };
+      baseFilter.date = { $gte: startDate, $lte: endDate };
     } else if (year) {
       const startDate = new Date(year, 0, 1);
       const endDate = new Date(year, 11, 31, 23, 59, 59, 999);
-      filter.date = { $gte: startDate, $lte: endDate };
+      baseFilter.date = { $gte: startDate, $lte: endDate };
+    }
+
+    // For transfers, only show transactions where user is sender or receiver
+    // For non-transfers, show all transactions in home
+    let filter: Record<string, unknown>;
+
+    if (type === 'TRANSFER') {
+      // Only show transfers where user is involved
+      filter = {
+        ...baseFilter,
+        type: 'TRANSFER',
+        $or: [{ fromUserId: userObjectId }, { toUserId: userObjectId }],
+        // Only show one transaction per transfer (the one created by sender)
+        createdById: { $exists: true },
+      };
+    } else if (type) {
+      filter = { ...baseFilter, type };
+    } else {
+      // All types - but filter transfers to only show relevant ones
+      filter = {
+        ...baseFilter,
+        $or: [
+          { type: { $ne: 'TRANSFER' } },
+          { type: 'TRANSFER', fromUserId: userObjectId },
+          { type: 'TRANSFER', toUserId: userObjectId },
+        ],
+      };
     }
 
     const skip = (page - 1) * limit;
@@ -128,11 +154,6 @@ export class TransactionService {
       throw new AppError('Transaction not found', 404);
     }
 
-    // If this is a transfer, also delete the linked transaction
-    if (transaction.type === 'TRANSFER' && transaction.linkedTransactionId) {
-      await Transaction.findByIdAndDelete(transaction.linkedTransactionId);
-    }
-
     await Transaction.findByIdAndDelete(id);
 
     return { id };
@@ -182,8 +203,9 @@ export class TransactionService {
 
     const title = input.title || `Transfer`;
 
-    // Create outgoing transaction (from sender's perspective)
-    const outgoingTransaction = await Transaction.create({
+    // Create single transfer transaction
+    // This will be shown to both users - sender sees it as expense, receiver sees it as income
+    const transaction = await Transaction.create({
       type: 'TRANSFER',
       title,
       amount: input.amount,
@@ -197,28 +219,7 @@ export class TransactionService {
       isRecurring: false,
     });
 
-    // Create incoming transaction (from receiver's perspective)
-    const incomingTransaction = await Transaction.create({
-      type: 'TRANSFER',
-      title,
-      amount: input.amount,
-      date: input.date,
-      categoryId: transferCategory._id,
-      createdById: toUserObjectId,
-      homeId: homeObjectId,
-      fromUserId: fromUserObjectId,
-      toUserId: toUserObjectId,
-      linkedTransactionId: outgoingTransaction._id,
-      isShared: false,
-      isRecurring: false,
-    });
-
-    // Link the outgoing transaction to incoming
-    await Transaction.findByIdAndUpdate(outgoingTransaction._id, {
-      linkedTransactionId: incomingTransaction._id,
-    });
-
-    return outgoingTransaction.toJSON();
+    return transaction.toJSON();
   }
 }
 

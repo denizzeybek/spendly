@@ -22,6 +22,8 @@ export interface UserSummary {
   personalExpense: number;
   sharedExpenseShare: number;
   creditCardDebt: number;
+  transfersReceived: number;
+  transfersSent: number;
   balance: number;
 }
 

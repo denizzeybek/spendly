@@ -180,6 +180,20 @@ export default function ReportsScreen() {
                         {formatCurrency(user.sharedExpenseShare, currency)}
                       </Text>
                     </HStack>
+                    {(user.transfersReceived > 0 || user.transfersSent > 0) && (
+                      <HStack justifyContent="space-between">
+                        <Text size="sm" color="$textLight500" sx={{ _dark: { color: '$textDark400' } }}>
+                          {t('summary.transfer')}
+                        </Text>
+                        <Text
+                          size="sm"
+                          color={user.transfersReceived - user.transfersSent >= 0 ? '$success500' : '$error500'}
+                        >
+                          {user.transfersReceived - user.transfersSent >= 0 ? '+' : ''}
+                          {formatCurrency(user.transfersReceived - user.transfersSent, currency)}
+                        </Text>
+                      </HStack>
+                    )}
                     <HStack justifyContent="space-between">
                       <Text size="sm" color="$textLight500" sx={{ _dark: { color: '$textDark400' } }}>
                         {t('summary.totalExpense')}

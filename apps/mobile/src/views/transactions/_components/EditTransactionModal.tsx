@@ -18,10 +18,16 @@ import {
   ButtonSpinner,
   ButtonGroup,
   Switch,
+  Box,
 } from '@gluestack-ui/themed';
 import { useTranslation } from 'react-i18next';
-import { CategoryDropdown } from '../../../components';
+import { Dropdown } from '../../../components';
+import type { DropdownItem } from '../../../components';
 import { TransactionItem, TransactionType, CategoryItem } from '../../../types';
+
+interface CategoryDropdownItem extends DropdownItem {
+  type?: string;
+}
 
 interface EditTransactionModalProps {
   isOpen: boolean;
@@ -50,22 +56,44 @@ export function EditTransactionModal({
   isLoading = false,
 }: EditTransactionModalProps) {
   const { t } = useTranslation();
-  const [type, setType] = useState<TransactionType>('EXPENSE');
+  const [type, setType] = useState<'INCOME' | 'EXPENSE'>('EXPENSE');
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [isShared, setIsShared] = useState(false);
   const [isRecurring, setIsRecurring] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<CategoryItem | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryDropdownItem | null>(null);
+
+  // Filter categories by type
+  const filteredCategories: CategoryDropdownItem[] = categories
+    .filter((cat) => cat.type === type || cat.type === 'BOTH')
+    .map((cat) => ({
+      id: cat.id || '',
+      name: cat.name || '',
+      icon: cat.icon,
+      color: cat.color,
+      type: cat.type,
+    }));
 
   useEffect(() => {
     if (transaction) {
-      setType(transaction.type || 'EXPENSE');
+      const transactionType = transaction.type === 'TRANSFER' ? 'EXPENSE' : (transaction.type || 'EXPENSE');
+      setType(transactionType as 'INCOME' | 'EXPENSE');
       setTitle(transaction.title || '');
       setAmount(String(transaction.amount || ''));
       setIsShared(transaction.isShared || false);
       setIsRecurring(transaction.isRecurring || false);
       const matchingCategory = categories.find((c) => c.id === transaction.categoryId?._id);
-      setSelectedCategory(matchingCategory || null);
+      if (matchingCategory) {
+        setSelectedCategory({
+          id: matchingCategory.id || '',
+          name: matchingCategory.name || '',
+          icon: matchingCategory.icon,
+          color: matchingCategory.color,
+          type: matchingCategory.type,
+        });
+      } else {
+        setSelectedCategory(null);
+      }
     }
   }, [transaction, categories]);
 
@@ -79,7 +107,7 @@ export function EditTransactionModal({
   }, [type, selectedCategory]);
 
   const handleSave = async () => {
-    if (!title || !amount) return;
+    if (!amount) return;
     await onSave({
       type,
       title,
@@ -128,9 +156,15 @@ export function EditTransactionModal({
               </Button>
             </ButtonGroup>
 
-            <Input size="lg" variant="outline">
-              <InputField placeholder={t('transactions.description')} value={title} onChangeText={setTitle} />
-            </Input>
+            <Dropdown<CategoryDropdownItem>
+              items={filteredCategories}
+              selectedItem={selectedCategory}
+              onSelect={setSelectedCategory}
+              onAddNew={onOpenAddCategory}
+              addNewLabel={t('categories.addCategory')}
+              placeholder={t('transactions.category')}
+              resetTrigger={type}
+            />
 
             <Input size="lg" variant="outline">
               <InputSlot pl="$3">
@@ -146,13 +180,9 @@ export function EditTransactionModal({
               />
             </Input>
 
-            <CategoryDropdown
-              categories={categories}
-              selectedCategory={selectedCategory}
-              onSelect={setSelectedCategory}
-              onAddNew={onOpenAddCategory}
-              transactionType={type}
-            />
+            <Input size="lg" variant="outline">
+              <InputField placeholder={t('transactions.description')} value={title} onChangeText={setTitle} />
+            </Input>
 
             {type === 'EXPENSE' && (
               <HStack justifyContent="space-between" alignItems="center">
@@ -172,7 +202,7 @@ export function EditTransactionModal({
             <Button flex={1} variant="outline" action="secondary" onPress={handleClose}>
               <ButtonText>{t('common.cancel')}</ButtonText>
             </Button>
-            <Button flex={1} onPress={handleSave} isDisabled={isLoading || !title || !amount}>
+            <Button flex={1} onPress={handleSave} isDisabled={isLoading || !amount}>
               {isLoading && <ButtonSpinner mr="$2" />}
               <ButtonText>{t('common.save')}</ButtonText>
             </Button>

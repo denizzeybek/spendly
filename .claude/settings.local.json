@@ -32,7 +32,6 @@
       "Bash(npx openapi-typescript-codegen:*)",
       "Bash(node:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)",
       "Bash(cat:*)",
       "Bash(yarn gcl:*)",
       "Bash(npx tsc --noEmit)",

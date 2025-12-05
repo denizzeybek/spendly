@@ -29,15 +29,18 @@ export interface TransactionItem {
   };
   createdById?: {
     _id?: string;
+    id?: string;
     name?: string;
   };
   // Transfer specific fields
   fromUserId?: {
     _id?: string;
+    id?: string;
     name?: string;
   };
   toUserId?: {
     _id?: string;
+    id?: string;
     name?: string;
   };
 }

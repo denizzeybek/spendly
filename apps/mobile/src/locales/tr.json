@@ -13,7 +13,10 @@
     "confirm": "Onayla",
     "back": "Geri",
     "none": "Yok",
-    "done": "Tamam"
+    "done": "Tamam",
+    "select": "Seç",
+    "addNew": "Yeni Ekle",
+    "noItems": "Öğe bulunamadı"
   },
   "auth": {
     "login": "Giriş Yap",
@@ -60,7 +63,9 @@
     "selectRecipient": "Alıcı Seç",
     "transferTo": "Alıcı",
     "transferFrom": "Gönderen",
-    "cannotTransferToSelf": "Kendinize transfer yapamazsınız"
+    "cannotTransferToSelf": "Kendinize transfer yapamazsınız",
+    "noOtherUsers": "Bu evde başka kullanıcı yok",
+    "send": "Gönder"
   },
   "categories": {
     "title": "Kategoriler",
@@ -184,6 +189,7 @@
     "sharedExpense": "Ortak Harcama Payım",
     "personalExpense": "Kişisel Harcamam",
     "creditCardDebt": "Kredi Kartı Borcu",
+    "transfer": "Transfer",
     "balance": "Net Bakiye",
     "sharedExpenses": "Ortak Harcamalar",
     "total": "Toplam",

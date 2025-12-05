@@ -46,9 +46,17 @@ export class HomeService {
     const usersWithCards = await Promise.all(
       users.map(async (user) => {
         const creditCard = await CreditCard.findOne({ userId: user._id });
+        const userJson = user.toJSON();
         return {
-          ...user.toJSON(),
-          creditCard: creditCard?.toJSON() || null,
+          id: userJson._id?.toString() || userJson.id,
+          name: userJson.name,
+          email: userJson.email,
+          creditCard: creditCard
+            ? {
+                id: creditCard._id?.toString(),
+                name: creditCard.name,
+              }
+            : null,
         };
       })
     );
@@ -75,7 +83,7 @@ export class HomeService {
         const cardIds = userCreditCards.map((c) => c._id);
 
         // Aggregate transactions for this user
-        const [incomeAgg, personalExpenseAgg, mySharedExpenseAgg, allSharedExpenseAgg, creditCardAgg] = await Promise.all([
+        const [incomeAgg, personalExpenseAgg, mySharedExpenseAgg, allSharedExpenseAgg, creditCardAgg, transfersReceivedAgg, transfersSentAgg] = await Promise.all([
           // Total income created by this user (excluding transfers)
           Transaction.aggregate([
             {
@@ -140,10 +148,38 @@ export class HomeService {
                 { $group: { _id: null, total: { $sum: '$amount' } } },
               ])
             : [{ total: 0 }],
+          // Transfers received by this user (money coming in)
+          Transaction.aggregate([
+            {
+              $match: {
+                homeId: homeObjectId,
+                type: 'TRANSFER',
+                toUserId: userId,
+                date: { $gte: startDate, $lte: endDate },
+              },
+            },
+            { $group: { _id: null, total: { $sum: '$amount' } } },
+          ]),
+          // Transfers sent by this user (money going out)
+          Transaction.aggregate([
+            {
+              $match: {
+                homeId: homeObjectId,
+                type: 'TRANSFER',
+                fromUserId: userId,
+                date: { $gte: startDate, $lte: endDate },
+              },
+            },
+            { $group: { _id: null, total: { $sum: '$amount' } } },
+          ]),
         ]);
 
-        const totalIncome = incomeAgg[0]?.total || 0;
-        const personalExpense = personalExpenseAgg[0]?.total || 0;
+        const baseIncome = incomeAgg[0]?.total || 0;
+        const transfersReceived = transfersReceivedAgg[0]?.total || 0;
+        const transfersSent = transfersSentAgg[0]?.total || 0;
+        // Transfers received count as income, transfers sent count as expense
+        const totalIncome = baseIncome + transfersReceived;
+        const personalExpense = (personalExpenseAgg[0]?.total || 0) + transfersSent;
         const mySharedExpense = mySharedExpenseAgg[0]?.total || 0;
         const allSharedExpense = allSharedExpenseAgg[0]?.total || 0;
         const creditCardDebt = creditCardAgg[0]?.total || 0;
@@ -165,6 +201,8 @@ export class HomeService {
           sharedExpenseShare,
           mySharedExpense, // What this user entered as shared
           creditCardDebt,
+          transfersReceived,
+          transfersSent,
           balance: totalIncome - totalExpense,
         };
       })

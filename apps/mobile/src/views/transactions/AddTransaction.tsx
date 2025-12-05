@@ -23,31 +23,65 @@ import {
 } from '@gluestack-ui/themed';
 import { useTranslation } from 'react-i18next';
 import { router, useFocusEffect } from 'expo-router';
-import { Users, Repeat, CreditCard, ChevronDown } from 'lucide-react-native';
-import { useTransactionsStore, useCategoriesStore, useCreditCardsStore } from '../../store';
-import { CategoryDropdown, AddCategoryModal } from '../../components';
-import { TransferForm } from './_components';
+import { Users, Repeat, CreditCard, ChevronDown, User } from 'lucide-react-native';
+import { useTransactionsStore, useCategoriesStore, useCreditCardsStore, useHomeStore, useAuthStore } from '../../store';
+import { Dropdown, AddCategoryModal } from '../../components';
+import type { DropdownItem } from '../../components';
 import type { CreditCard as CreditCardType } from '../../client';
 import { colors } from '../../constants/theme';
 import { CategoryItem } from '../../types';
+import type { HomeUser } from '../../store/home.store';
 
 type TabType = 'EXPENSE' | 'INCOME' | 'TRANSFER';
 
+// Convert CategoryItem to DropdownItem
+interface CategoryDropdownItem extends DropdownItem {
+  type?: string;
+}
+
+// Convert HomeUser to DropdownItem
+interface UserDropdownItem extends DropdownItem {
+  email?: string;
+}
+
 export default function AddTransactionScreen() {
   const { t } = useTranslation();
-  const { createTransaction, isCreating, error } = useTransactionsStore();
+  const { createTransaction, createTransfer, isCreating, error } = useTransactionsStore();
   const { categories, fetchCategories, createCategory, isCreating: isCreatingCategory } = useCategoriesStore();
   const { creditCards, fetchCreditCards } = useCreditCardsStore();
+  const { users, fetchUsers } = useHomeStore();
+  const currentUser = useAuthStore((state) => state.user);
 
   const [tab, setTab] = useState<TabType>('EXPENSE');
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<CategoryItem | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryDropdownItem | null>(null);
   const [selectedCard, setSelectedCard] = useState<CreditCardType | null>(null);
+  const [selectedUser, setSelectedUser] = useState<UserDropdownItem | null>(null);
   const [isShared, setIsShared] = useState(false);
   const [isRecurring, setIsRecurring] = useState(false);
   const [showCardModal, setShowCardModal] = useState(false);
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+
+  // Filter categories by type
+  const filteredCategories: CategoryDropdownItem[] = categories
+    .filter((cat) => cat.type === tab || cat.type === 'BOTH')
+    .map((cat) => ({
+      id: cat.id || '',
+      name: cat.name || '',
+      icon: cat.icon,
+      color: cat.color,
+      type: cat.type,
+    }));
+
+  // Filter out current user from transfer recipients
+  const otherUsers: UserDropdownItem[] = users
+    .filter((u) => u.id !== currentUser?.id)
+    .map((u) => ({
+      id: u.id,
+      name: u.name,
+      subtitle: u.email,
+    }));
 
   const resetForm = useCallback(() => {
     setTab('EXPENSE');
@@ -55,6 +89,7 @@ export default function AddTransactionScreen() {
     setAmount('');
     setSelectedCategory(null);
     setSelectedCard(null);
+    setSelectedUser(null);
     setIsShared(false);
     setIsRecurring(false);
   }, []);
@@ -64,29 +99,46 @@ export default function AddTransactionScreen() {
       resetForm();
       fetchCategories();
       fetchCreditCards();
-    }, [resetForm, fetchCategories, fetchCreditCards])
+      fetchUsers();
+    }, [resetForm, fetchCategories, fetchCreditCards, fetchUsers])
   );
 
   useEffect(() => {
     setSelectedCategory(null);
+    setSelectedUser(null);
   }, [tab]);
 
   const handleSubmit = async () => {
-    if (!amount || !selectedCategory) return;
-    try {
-      await createTransaction({
-        type: tab as 'INCOME' | 'EXPENSE',
-        title: title || undefined,
-        amount: parseFloat(amount),
-        date: new Date().toISOString(),
-        categoryId: selectedCategory.id || '',
-        assignedCardId: selectedCard?.id,
-        isShared,
-        isRecurring,
-      });
-      router.back();
-    } catch {
-      // Error handled in store
+    if (tab === 'TRANSFER') {
+      if (!amount || !selectedUser) return;
+      try {
+        await createTransfer({
+          amount: parseFloat(amount),
+          date: new Date().toISOString(),
+          toUserId: selectedUser.id,
+          title: title || undefined,
+        });
+        router.back();
+      } catch {
+        // Error handled in store
+      }
+    } else {
+      if (!amount || !selectedCategory) return;
+      try {
+        await createTransaction({
+          type: tab as 'INCOME' | 'EXPENSE',
+          title: title || undefined,
+          amount: parseFloat(amount),
+          date: new Date().toISOString(),
+          categoryId: selectedCategory.id || '',
+          assignedCardId: selectedCard?.id,
+          isShared,
+          isRecurring,
+        });
+        router.back();
+      } catch {
+        // Error handled in store
+      }
     }
   };
 
@@ -101,8 +153,8 @@ export default function AddTransactionScreen() {
       setShowAddCategoryModal(false);
       if (newCategory) {
         setSelectedCategory({
-          id: newCategory.id,
-          name: newCategory.name,
+          id: newCategory.id || '',
+          name: newCategory.name || '',
           icon: newCategory.icon,
           color: newCategory.color,
           type: newCategory.type,
@@ -113,14 +165,71 @@ export default function AddTransactionScreen() {
     }
   };
 
+  const renderUserIcon = (item: UserDropdownItem | null, isPlaceholder: boolean) => {
+    if (isPlaceholder || !item) {
+      return <User size={20} color="#A3A3A3" />;
+    }
+    return (
+      <Box w="$8" h="$8" borderRadius="$full" justifyContent="center" alignItems="center" bg="$primary100">
+        <Text size="md" color="$primary600" fontWeight="$bold">
+          {item.name?.charAt(0).toUpperCase()}
+        </Text>
+      </Box>
+    );
+  };
+
+  const renderTransferForm = () => (
+    <>
+      <Dropdown<UserDropdownItem>
+        items={otherUsers}
+        selectedItem={selectedUser}
+        onSelect={setSelectedUser}
+        placeholder={t('transactions.selectRecipient')}
+        renderIcon={renderUserIcon}
+        resetTrigger={tab}
+      />
+
+      <Input size="xl" variant="outline">
+        <InputSlot pl="$3">
+          <Text size="lg" color="$textLight500">
+            ₺
+          </Text>
+        </InputSlot>
+        <InputField
+          placeholder={t('transactions.amount')}
+          value={amount}
+          onChangeText={setAmount}
+          keyboardType="decimal-pad"
+        />
+      </Input>
+
+      <Input size="xl" variant="outline">
+        <InputField placeholder={t('transactions.description')} value={title} onChangeText={setTitle} />
+      </Input>
+
+      {error && (
+        <Text color="$error500" textAlign="center">
+          {error}
+        </Text>
+      )}
+
+      <Button size="xl" onPress={handleSubmit} isDisabled={isCreating || !amount || !selectedUser} mt="$4">
+        {isCreating && <ButtonSpinner mr="$2" />}
+        <ButtonText>{t('transactions.send')}</ButtonText>
+      </Button>
+    </>
+  );
+
   const renderIncomeExpenseForm = () => (
     <>
-      <CategoryDropdown
-        categories={categories}
-        selectedCategory={selectedCategory}
+      <Dropdown<CategoryDropdownItem>
+        items={filteredCategories}
+        selectedItem={selectedCategory}
         onSelect={setSelectedCategory}
         onAddNew={() => setShowAddCategoryModal(true)}
-        transactionType={tab as 'INCOME' | 'EXPENSE'}
+        addNewLabel={t('categories.addCategory')}
+        placeholder={t('transactions.category')}
+        resetTrigger={tab}
       />
 
       <Input size="xl" variant="outline">
@@ -225,7 +334,7 @@ export default function AddTransactionScreen() {
             </Button>
           </ButtonGroup>
 
-          {tab === 'TRANSFER' ? <TransferForm /> : renderIncomeExpenseForm()}
+          {tab === 'TRANSFER' ? renderTransferForm() : renderIncomeExpenseForm()}
         </VStack>
 
         <AddCategoryModal
@@ -233,7 +342,7 @@ export default function AddTransactionScreen() {
           onClose={() => setShowAddCategoryModal(false)}
           onSave={handleSaveNewCategory}
           isLoading={isCreatingCategory}
-          defaultType={tab as 'INCOME' | 'EXPENSE'}
+          defaultType={tab === 'TRANSFER' ? 'EXPENSE' : (tab as 'INCOME' | 'EXPENSE')}
         />
 
         <Modal isOpen={showCardModal} onClose={() => setShowCardModal(false)}>

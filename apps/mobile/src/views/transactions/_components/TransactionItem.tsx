@@ -23,8 +23,10 @@ export function TransactionItem({ item, currency, onPress, onDelete }: Transacti
   };
 
   const isTransfer = item.type === 'TRANSFER';
-  const isOutgoingTransfer = isTransfer && item.fromUserId?._id === currentUser?.id;
-  const isIncomingTransfer = isTransfer && item.toUserId?._id === currentUser?.id;
+  const fromId = item.fromUserId?._id || item.fromUserId?.id;
+  const toId = item.toUserId?._id || item.toUserId?.id;
+  const isOutgoingTransfer = isTransfer && fromId === currentUser?.id;
+  const isIncomingTransfer = isTransfer && toId === currentUser?.id;
 
   const getTransferLabel = () => {
     if (isOutgoingTransfer) {
@@ -73,7 +75,7 @@ export function TransactionItem({ item, currency, onPress, onDelete }: Transacti
               <Text size="md" fontWeight="$medium" numberOfLines={1} flex={1}>
                 {isTransfer ? t('transactions.transfer') : item.categoryId?.name || '-'}
               </Text>
-              {isTransfer && (
+              {isTransfer && getTransferLabel() && (
                 <Text size="xs" color="$primary500" numberOfLines={1}>
                   {getTransferLabel()}
                 </Text>

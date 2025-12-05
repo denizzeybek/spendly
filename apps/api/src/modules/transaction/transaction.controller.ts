@@ -29,7 +29,7 @@ export class TransactionController {
   ): Promise<void> {
     try {
       const query = req.query as unknown as ListTransactionsQuery;
-      const result = await transactionService.list(query, req.user!.homeId);
+      const result = await transactionService.list(query, req.user!.homeId, req.user!.userId);
       sendPaginated(res, result.data, result.pagination);
     } catch (error) {
       next(error);

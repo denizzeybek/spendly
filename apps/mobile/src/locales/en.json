@@ -13,7 +13,10 @@
     "confirm": "Confirm",
     "back": "Back",
     "none": "None",
-    "done": "Done"
+    "done": "Done",
+    "select": "Select",
+    "addNew": "Add New",
+    "noItems": "No items available"
   },
   "auth": {
     "login": "Login",
@@ -60,7 +63,9 @@
     "selectRecipient": "Select Recipient",
     "transferTo": "Transfer to",
     "transferFrom": "Transfer from",
-    "cannotTransferToSelf": "You cannot transfer to yourself"
+    "cannotTransferToSelf": "You cannot transfer to yourself",
+    "noOtherUsers": "No other users in this home",
+    "send": "Send"
   },
   "categories": {
     "title": "Categories",
@@ -184,6 +189,7 @@
     "sharedExpense": "My Shared Expense",
     "personalExpense": "My Personal Expense",
     "creditCardDebt": "Credit Card Debt",
+    "transfer": "Transfer",
     "balance": "Net Balance",
     "sharedExpenses": "Shared Expenses",
     "total": "Total",
